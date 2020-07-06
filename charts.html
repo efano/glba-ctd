@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Charts</title>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            color: #7E7E7E;
+            display: flex;
+        }
+
+        .wrapper {
+            position: relative;
+            margin-top: -8px;
+            background-color: whitesmoke;
+        }
+
+        .listening-rect {
+            fill: transparent;
+        }
+
+        .tooltip {
+            opacity: 0;
+            position: absolute;
+            top: 20px;
+            left: 10;
+            padding: 0.6em 1em;
+            background: #fff;
+            border: .5px solid #f5f5f5;
+            text-align: left;
+            line-height: 1.3em;
+            font-size: .7em;
+            font-weight: 600;
+            z-index: 10;
+            transition: all 0.1s ease-out;
+            pointer-events: none;
+            border-radius: 5px;
+            box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
+            z-index: 999;
+        }
+
+        .tooltip:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border: 1px solid #ddd;
+            border-top-color: transparent;
+            border-left-color: transparent;
+            transform: translate(-50%, 50%) rotate(45deg);
+            transform-origin: center center;
+            z-index: 999;
+        }
+
+        .tooltip-title {
+            margin-bottom: 0.3em;
+            color: #222;
+            font-size: 1em;
+            font-weight: 600;
+            padding-top: 4px;
+        }
+
+        .tooltip-text {
+            margin-bottom: 0.3em;
+            color: #222;
+            font-size: .9em;
+            font-weight: 500;
+            line-height: 1em;
+        }
+
+        .tooltip-num {
+            float: right;
+            font-weight: 600;
+        }
+
+        .grid line {
+            stroke: #ddd;
+            /* stroke-dasharray: 1.5; */
+        }
+
+        .voronoi {
+            fill: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div id="ui-controls">
+            <select id="dropdown">
+                <option value="conductivity" title="Conductivity (S/m)">Conductivity </option>
+                <option value="sigma_t" title="Density (kg/m&sup3;)">Density </option>
+                <option value="oxygen" title="Dissolved O&#x2082; (ml/l)">Dissolved O&#x2082; </option>
+                <option value="fluorescence" title="Fluorescence (mg/m&sup3;)">Fluorescence </option>
+                <option value="par" title="PAR (uE/m&sup2; * sec)">PAR </option>
+                <option value="salinity" title="Salinity (PSU)" selected>Salinity </option>
+                <option value="temperature" title="Temperature (&#8451; )">Temperature </option>
+                <option value="obs" title="Backscatterence (NTU)">Turbidity </option>
+            </select>
+        </div>
+
+        <br>
+
+        <div class="wrapper" id="wrapper"></div>
+
+    </div>
+
+    <script src="./js/d3-delaunay.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    <script>
+        let attribute = "salinity"
+        let label = "Salinity (PSU)"
+
+        // switch between charts
+        //$('#wrapper').hide();
+        buildUI();
+
+        function buildUI() {
+            $('select[id="dropdown"]').change(function () {
+                $("#wrapper").empty();
+                attribute = this.value;
+                label = this.options[this.selectedIndex].title
+                drawChart();
+            });
+        }
+
+        async function drawChart() {
+
+            // access data
+            const dataset = await d3.csv("data/GLBA_CTD_Test.csv")
+            //console.log("DATASET: ", dataset);
+            const yAccessor = d => +d.depth * -1;
+            const xAccessor = d => +d[attribute];
+
+            // create chart dimensions
+            let dimensions = {
+                width: 300,
+                height: 300,
+                margin: {
+                    top: 15,
+                    right: 15,
+                    bottom: 40,
+                    left: 60,
+                },
+            }
+
+            dimensions.boundedWidth = dimensions.width -
+                dimensions.margin.left -
+                dimensions.margin.right
+            dimensions.boundedHeight = dimensions.height -
+                dimensions.margin.top -
+                dimensions.margin.bottom
+
+            // draw canvas
+            const wrapper = d3.select("#wrapper")
+                .append("svg")
+                .attr("width", dimensions.width)
+                .attr("height", dimensions.height)
+
+            const bounds = wrapper.append("g")
+                .style("transform", `translate(${
+                    dimensions.margin.left
+                }px, ${
+                    dimensions.margin.top
+                }px)`)
+
+            // create scales
+            const yScale = d3.scaleLinear()
+                .domain(d3.extent(dataset, yAccessor))
+                .range([dimensions.boundedHeight, 0])
+                .nice()
+
+            const xScale = d3.scaleLinear()
+                .domain(d3.extent(dataset, xAccessor))
+                .range([0, dimensions.boundedWidth])
+                .nice()
+
+            // create gridlines
+            const gridlinesY = d3.axisTop()
+                .tickFormat("")
+                .tickSize(-dimensions.boundedHeight)
+                .scale(xScale);
+
+            bounds.append("g")
+                .attr("class", "grid")
+                .call(gridlinesY);
+
+            const gridlinesX = d3.axisLeft()
+                .tickFormat("")
+                .tickSize(-dimensions.boundedWidth)
+                .scale(yScale);
+
+            bounds.append("g")
+                .attr("class", "grid")
+                .call(gridlinesX);
+
+            // draw line 
+            const lineGenerator = d3.line()
+                .x(d => xScale(xAccessor(d)))
+                .y(d => yScale(yAccessor(d)))
+                .curve(d3.curveMonotoneX);
+
+            const line = bounds.append("path")
+                .attr("d", lineGenerator(dataset))
+                .attr("fill", "none")
+                .attr("stroke", "#222")
+                .attr("stroke-width", 1.5)
+                .attr("class", "line")
+
+            // draw points 
+            const dots = bounds.selectAll("circle")
+                .data(dataset, d => d[0])
+
+            const newDots = dots.enter().append("circle")
+
+            const allDots = newDots.merge(dots)
+                .attr("cx", d => xScale(xAccessor(d)))
+                .attr("cy", d => yScale(yAccessor(d)))
+                .transition()
+                .delay(760)
+                .attr("r", 1)
+                //.attr("fill", "red")
+                .attr("stroke", "red")
+
+            const oldDots = dots.exit()
+                .remove()
+
+            // draw peripherals
+            const yAxisGenerator = d3.axisLeft()
+                .scale(yScale)
+                .ticks(5)
+
+            const yAxis = bounds.append("g")
+                .call(yAxisGenerator)
+
+            const yAxisLabel = yAxis.append("text")
+                .attr("class", "y-axis-label")
+                .attr("fill", "#7E7E7E")
+                .attr("transform", "rotate(-90)")
+                .attr("x", -dimensions.boundedHeight / 2)
+                .attr("y", -dimensions.margin.left + 26)
+                .attr("text-anchor", "middle")
+                .html("Depth (m)");
+
+            const xAxisGenerator = d3.axisBottom()
+                .scale(xScale)
+                .ticks(5)
+
+            const xAxis = bounds.append("g")
+                .call(xAxisGenerator)
+                .style("transform", `translateY(${
+                    (dimensions.boundedHeight)
+                }px)`)
+
+            const xAxisLabel = xAxis.append("text")
+                .attr("class", "x-axis-label")
+                .attr("fill", "#7E7E7E")
+                .attr("x", dimensions.boundedWidth / 2)
+                .attr("y", dimensions.margin.bottom - 6)
+                .attr("text-anchor", "middle")
+                .html(label)
+
+            // animation
+            const totalLineLength = line.node().getTotalLength();
+
+            line
+                .attr("stroke-dasharray", totalLineLength + " " + totalLineLength)
+                .attr("stroke-dashoffset", totalLineLength)
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                .attr("stroke-dashoffset", 0);
+
+            // create voroni polygons for tooltip hover interactions
+            const delaunay = d3.Delaunay.from(
+                dataset,
+                d => xScale(xAccessor(d)),
+                d => yScale(yAccessor(d)),
+            )
+            const voronoi = delaunay.voronoi()
+            voronoi.xmax = dimensions.boundedWidth
+            voronoi.ymax = dimensions.boundedHeight
+
+            bounds.selectAll(".voronoi")
+                .data(dataset)
+                .enter().append("path")
+                .attr("class", "voronoi")
+                .attr("d", (d, i) => voronoi.renderCell(i))
+                //.attr("stroke", "green")
+                .on("mouseenter", onMouseEnter)
+                .on("mouseleave", onMouseLeave)
+
+            // create tooltip
+            const tooltip = d3.select("body")
+                .append("div")
+                .attr("class", "tooltip")
+                .style("position", "absolute")
+                .style("z-index", "10")
+                .style("visibility", "hidden")
+
+            return tooltip
+                .style("visibility", "visible")
+                .html("<span>" +
+                    "<div class='tooltip-title'>" + "Depth: &thinsp;" + "<span class='tooltip-num' id='depth'>" + "</span></div>" +
+                    "<hr>" +
+                    "<div class='tooltip-text'>" + "Conductivity: &thinsp;" + "<span class='tooltip-num' id='conductivity'>" +
+                    "</span></div>" +
+                    "<div class='tooltip-text'>" + "Density: &thinsp;" + "<span class='tooltip-num' id='sigma_t'>" +
+                    "</span></div>" +
+                    "<div class='tooltip-text'>" + "Dissolved O&#x2082;: &thinsp;" + "<span class='tooltip-num' id='oxygen'>" +
+                    "</span></div>" +
+                    "<div class='tooltip-text'>" + "Fluorescence: &thinsp;" +
+                    "<span class='tooltip-num' id='fluorescence'>" + "</span></div>" +
+                    "<div class='tooltip-text'>" + "PAR: &thinsp;" + "<span class='tooltip-num' id='par'>" +
+                    "</span></div>" +
+                    "<div class='tooltip-text'>" + "Salinity: &thinsp;" + "<span class='tooltip-num' id='salinity'>" +
+                    "</span></div>" +
+                    "<div class='tooltip-text'>" + "Temperature: &thinsp;" + "<span class='tooltip-num' id='temperature'>" +
+                    "</span></div>" +
+                    "<div class='tooltip-text'>" + "Turbidity: &thinsp;" + "<span class='tooltip-num' id='obs'>" +
+                    "</span></div>" +
+                    "</span>")
+
+            function onMouseEnter(datum) {
+                const dayDot = bounds.append("circle")
+                    .attr("class", "tooltipDot")
+                    .attr("cx", xScale(xAccessor(datum)))
+                    .attr("cy", yScale(yAccessor(datum)))
+                    .attr("r", 4.5)
+                    .style("fill", "red")
+                    .style("stroke", "black")
+                    .style("pointer-events", "none")
+
+                const formatDepth = d => `${d3.format(".0f")(d)} meters`
+                tooltip.select("#depth")
+                    .text(formatDepth(yAccessor(datum)))
+
+                const formatConductivity = d => `${d3.format(".2f")(d)}`
+                tooltip.select("#conductivity")
+                    .text(formatConductivity(datum.conductivity))
+
+                const formatDensity = d => `${d3.format(".2f")(d)}`
+                tooltip.select("#sigma_t")
+                    .text(formatDensity(datum.sigma_t))
+
+                const formatOxygen = d => `${d3.format(".2f")(d)}`
+                tooltip.select("#oxygen")
+                    .text(formatOxygen(datum.oxygen))
+
+                const formatFluorescence = d => `${d3.format(".2f")(d)}`
+                tooltip.select("#fluorescence")
+                    .text(formatFluorescence(datum.fluorescence))
+
+                const formatPAR = d => `${d3.format(".2f")(d)}`
+                tooltip.select("#par")
+                    .text(formatPAR(datum.par))
+
+                const formatSalinity = d => `${d3.format(".2f")(d)}`
+                tooltip.select("#salinity")
+                    .text(formatSalinity(datum.salinity))
+
+                const formatTemperature = d => `${d3.format(".2f")(d)}`
+                tooltip.select("#temperature")
+                    .text(formatTemperature(datum.temperature))
+
+                const formatTurbidity = d => `${d3.format(".2f")(d)}`
+                tooltip.select("#obs")
+                    .text(formatTurbidity(datum.obs))
+
+                const x = xScale(xAccessor(datum)) +
+                    dimensions.margin.left
+                const y = yScale(yAccessor(datum)) +
+                    dimensions.margin.top
+
+                tooltip.style("transform", `translate(` +
+                    `calc( -50% + ${x}px),` +
+                    `calc(-100% + ${y}px)` +
+                    `)`)
+
+                tooltip.style("opacity", 1)
+            }
+
+            function onMouseLeave() {
+                d3.selectAll(".tooltipDot")
+                    .remove()
+
+                tooltip.style("opacity", 0)
+            }
+
+        };
+        drawChart();
+    </script>
+</body>
+
+</html>
