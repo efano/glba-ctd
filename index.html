@@ -83,6 +83,8 @@
             font-size: 26px;
             font-weight: 500;
             color: whitesmoke;
+            letter-spacing: .15px;
+            ;
         }
 
         #icon-group {
@@ -95,13 +97,13 @@
 
         .navbar-icon {
             font-size: 26px;
-            color: whitesmoke;
+            color: #dce8e8;
             background-color: #135154;
 
         }
 
         .navbar-icon:hover {
-            color: #C1D6D6;
+            color: white;
         }
 
         img {
@@ -109,13 +111,13 @@
             height: auto;
         }
 
-        @media (max-width: 1275px) {
+        @media (max-width: 1200px) {
             .navbar-title {
                 font-size: 16px;
             }
         }
 
-        @media (max-width: 800px) {
+        @media (max-width: 820px) {
             .navbar-title {
                 font-size: 10px;
             }
@@ -219,11 +221,11 @@
             height: 30px;
         }
 
-        #glacier-btn-dropdown {
+        /* #glacier-btn-dropdown {
             display: inline-block;
-            background-color: whitesmoke;
+            background-color: #dce8e8;
             color: #135154;
-            border-radius: 18px;
+            border-radius: 7px;
             text-align: center;
             transition: background-color 0.125s,
                 border-color 0.125s,
@@ -231,7 +233,7 @@
         }
 
         #glacier-btn-dropdown:hover {
-            background-color: #C1D6D6;
+            background-color: white;
             transition: background-color 0.125s,
                 border-color 0.125s,
                 color 0.125s;
@@ -289,12 +291,12 @@
 
         .show2 {
             display: block;
-        }
+        }*/
 
         .highlight {
             font-weight: 600;
             color: #0088A3;
-        }
+        } 
 
         .leaflet-control-scale-line {
             border: 1px solid #333;
@@ -319,6 +321,24 @@
             border-bottom: 1px solid #333;
         }
 
+        .leaflet-tooltip {
+            border-radius: 5px;
+            box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        .tooltipTitle {
+            white-space: nowrap;
+            color: #333;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .tooltipText {
+            font-size: 1em;
+            font-weight: 400;
+            color: #333;
+            margin-top: -19px;
+        }
     </style>
 </head>
 
@@ -327,15 +347,15 @@
         <div class="navbar">
             <div class="fullTitle">
                 <div class="fullTitleText">
-                    <span class="navbar-title">Glacier Bay National Park 2019 CTD Oceanographic Monitoring Observations
+                    <span class="navbar-title">Glacier Bay National Park 2019 Oceanographic Monitoring Observations
                     </span>
                 </div>
             </div>
 
             <nav class="main-nav">
                 <div class="flex-parent-inline" id="icon-group">
-                    <a class="navbar-icon" href="https://github.com/efano/GNP-glaciers/blob/master/README.md"
-                        target="_blank" id="info-icon" title="Project Information">
+                    <a class="navbar-icon" href="https://www.nps.gov/im/sean/oceanography.htm" target="_blank"
+                        id="info-icon" title="Project Information">
                         <svg class="icon mr6 info">
                             <use xlink:href="#icon-info" />
                         </svg>
@@ -359,13 +379,13 @@
                         </svg>
                     </div>
 
-                    <div class="glacierDropdown">
+                    <!-- <div class="glacierDropdown">
                         <button onclick="glacierDropdownFunction()" class="btn btn--s" id="glacier-btn-dropdown">Select
                             Station &thinsp;&#9662;</button>
                         <div id="glacierDropdownList" class="dropdown-content2">
                             <ul id="dropdown-list2"></ul>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </nav>
         </div>
@@ -403,7 +423,7 @@
 
         // basemaps
         const oceanESRI = L.tileLayer(
-            'https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',{
+            'https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community',
             })
         const topoESRI = L.tileLayer(
@@ -415,17 +435,17 @@
                 attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community',
             });
         const nationalGeo = L.tileLayer(
-            'https://server.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',{
+            'https://server.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'National Geographic, Esri, Garmin, HERE, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, increment P Corp.',
             })
         const topoUSGS = L.tileLayer(
             'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community',
             });
-        
+
         const options = {
-            center: [58.7, -136.7],
-            zoom: 9,
+            //center: [58.7, -136.7],
+            //zoom: 9,
             maxZoom: 16,
             zoomSnap: .1,
             layers: imageryESRI,
@@ -436,7 +456,7 @@
         let baseLayers = {
             "USGS Topo": topoUSGS,
             "ESRI Imagery": imageryESRI,
-            "ESRI Ocean": oceanESRI, 
+            "ESRI Ocean": oceanESRI,
             "ESRI Topo": topoESRI,
             "National Geographic": nationalGeo,
         };
@@ -467,9 +487,116 @@
             maxWidth: 120,
         }).addTo(map);
 
+        // use D3 fetch to request data with async requests
+        const parkBoundary = d3.json('data/boundary.json');
+        const allPoints = d3.json('data/stations.json');
 
+        // use Promise to wait until data is all loaded
+        Promise.all([parkBoundary, allPoints])
+            .then(
+                drawMap);
 
+        function drawMap(data) {
 
+            // pull out separate data arrays and assign to variables
+            const boundsData = data[0];
+            const ptData = data[1];
+
+            // create a park boundary layer with the geojson data
+            const parkBounds = L.geoJson(boundsData, {
+                style: function (feature, layer) {
+                    return {
+                        fillOpacity: 0,
+                        color: '#989898',
+                        weight: 1.5,
+                        lineJoin: 'round',
+                        dashArray: '2,4'
+                    };
+                }
+            }).addTo(map);
+
+            // create a point layer with the geojson data
+            const stationPoints = L.geoJson(ptData, {
+                pointToLayer: function (feature, latlng) {
+                    return L.shapeMarker(latlng)
+                }
+            }).addTo(map);
+
+            // fit map bounds to feature extent
+            map.fitBounds(stationPoints.getBounds(), {
+                padding: [50, 50]
+            });
+
+            drawPts(stationPoints);
+            // draw stations 
+            function drawPts(stationPoints) {
+                stationPoints.eachLayer(function (layer) {
+                    let props = layer.feature.properties;
+                    let type = props.CoreLoc;
+
+                    if (type === "y") {
+                        layer.setStyle({
+                            shape: "triangle",
+                            color: '#333',
+                            fillColor: "#FF00D8",
+                            fillOpacity: 1,
+                            weight: 1.2,
+                            radius: 7,
+                        })
+                    } else if (type === "n") {
+                        layer.setStyle({
+                            shape: "triangle",
+                            color: '#333',
+                            fillColor: "#00FCFF",
+                            fillOpacity: 1,
+                            weight: 1.2,
+                            radius: 7,
+                        })
+                    };
+
+                    // tooltip
+                    layer.bindTooltip("<div class=tooltipTitle><b>" + "Station ID: " + props["Station"] +
+                                "</b></div><hr>" 
+                                // "<div class=tooltipText>" + "Area loss:&thinsp;" +
+                                // '<a class="tooltipPct" style="color:' + colorize(props.pctD) + '"> ' + (
+                                //     parseFloat(
+                                //         props["pctD"]) *
+                                //     100).toFixed(0) + "%" + '</a>', {
+                                //     opacity: 1
+                                // }
+                            );
+
+                    //when mousing over a station point
+                    layer.on('mouseover', function () {
+                        layer.bringToFront();
+                        // provide a visual affordance
+                        layer.setStyle({
+                            radius: 14
+                        });
+                        // select the cooresponding list item and add the highlight class to make bold
+                        //$('#glacierList-' + props.num).addClass('highlight');
+                    });
+
+                    layer.on('mouseout', function () {
+                        // reset back to our base styling opacity
+                        layer.setStyle({
+                            radius: 7
+                        });
+                        //$('#glacierList-' + props.num).removeClass('highlight');
+                    });
+                });
+            };
+
+            extentIcon(stationPoints);
+            // extent button on click
+            function extentIcon(stationPoints) {
+                $('#globe-icon').click(function () {
+                    map.flyToBounds(stationPoints.getBounds(), {
+                        padding: [30, 30]
+                    });
+                });
+            };
+        };
         $('#loader').remove();
     </script>
 </body>
