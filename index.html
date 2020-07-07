@@ -1,402 +1,496 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html lang="en">
 
 <head>
-    <title>Charts</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, width=device-width">
+    <link rel="icon" type="image/svg+xml" href="icons/mountain-fav.svg">
+
+    <title>Test</title>
+
+    <link href="https://api.mapbox.com/mapbox-assembly/v0.24.0/assembly.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Nunito:wght@900&display=swap"
+        rel="stylesheet">
 
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: default !important;
+            font-family: 'Lato', sans-serif;
+        }
+
+        html {
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: sans-serif;
-            color: #7E7E7E;
+            margin: 0;
+            padding: 0;
             display: flex;
         }
 
-        .wrapper {
-            position: relative;
-            margin-top: -8px;
-            background-color: whitesmoke;
-        }
-
-        .listening-rect {
-            fill: transparent;
-        }
-
-        .tooltip {
-            opacity: 0;
+        #map {
             position: absolute;
-            top: 20px;
-            left: 10;
-            padding: 0.6em 1em;
-            background: #fff;
-            border: .5px solid #f5f5f5;
-            text-align: left;
-            line-height: 1.3em;
-            font-size: .7em;
-            font-weight: 600;
-            z-index: 10;
-            transition: all 0.1s ease-out;
-            pointer-events: none;
-            border-radius: 5px;
-            box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
-            z-index: 999;
-        }
-
-        .tooltip:before {
-            content: '';
-            position: absolute;
+            width: 100%;
+            top: 50px;
             bottom: 0;
-            left: 50%;
-            width: 8px;
-            height: 8px;
+            background-color: whitesmoke;
+            z-index: -1;
+        }
+
+        #loader {
+            position: absolute;
+            top: 50%;
+            left: 0%;
+            margin: -33px 0 0 -33px;
+            width: 100%;
+            z-index: 1010;
+        }
+
+        .navbarParent {
             background: white;
-            border: 1px solid #ddd;
-            border-top-color: transparent;
-            border-left-color: transparent;
-            transform: translate(-50%, 50%) rotate(45deg);
-            transform-origin: center center;
-            z-index: 999;
+            box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            margin: auto;
         }
 
-        .tooltip-title {
-            margin-bottom: 0.3em;
-            color: #222;
-            font-size: 1em;
-            font-weight: 600;
-            padding-top: 4px;
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            height: 50px;
+            align-content: center;
         }
 
-        .tooltip-text {
-            margin-bottom: 0.3em;
-            color: #222;
-            font-size: .9em;
-            font-weight: 500;
-            line-height: 1em;
+        .fullTitle {
+            padding-top: 10px;
+            padding-left: 12px;
         }
 
-        .tooltip-num {
+        .fullTitleText {
+            margin-top: 4px;
+            margin-left: 0px;
+            align-content: center;
+        }
+
+        .navbar-title {
+            font-size: 26px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        #icon-group {
             float: right;
+            align-content: center;
+            white-space: nowrap;
+            padding-right: 12px;
+            padding-top: 12px;
+        }
+
+        .navbar-icon {
+            font-size: 26px;
+            color: #009DBD;
+
+        }
+
+        .navbar-icon:hover {
+            color: #0088A3;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        @media (max-width: 1275px) {
+            .vl {
+                display: none;
+            }
+
+            .navbar-subtitle {
+                display: none;
+            }
+        }
+
+        @media (max-width: 615px) {
+            .navbar-title {
+                display: inline-block;
+                word-spacing: 9999999px;
+                font-size: 7px;
+                line-height: 1.3;
+                padding-right: 10px;
+                margin-top: -3px;
+            }
+
+            .vl {
+                display: none;
+            }
+
+            .navbar-subtitle {
+                display: none;
+            }
+
+            .leaflet-control-attribution {
+                display: none;
+            }
+        }
+
+        @media (max-width: 350px) {
+            .navbar-title {
+                display: none;
+            }
+
+            .vl {
+                display: none;
+            }
+
+            .navbar-subtitle {
+                display: none;
+            }
+
+            .leaflet-control-attribution {
+                display: none;
+            }
+        }
+
+        .leaflet-bar {
+            box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        #layers-icon:active {
+            pointer-events: none;
+        }
+
+        #baselayer-btn-dropdown {
+            padding: 0px;
+        }
+
+        .dropdown-content1 {
+            display: none;
+            position: absolute;
+            background-color: transparent;
+            padding-top: 6px;
+            z-index: 1001;
+        }
+
+        .leaflet-control-layers {
+            box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            background: white;
+            min-width: 8.5rem;
+            padding: 8px 8px 8px 14px;
+        }
+
+        #baselayerDropdown {
+            margin-top: -3px;
+            color: #333;
+            line-height: 1.5;
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 1;
+        }
+
+        #baselayerDropdown ::selection {
             font-weight: 600;
+            color: #333;
         }
 
-        .grid line {
-            stroke: #ddd;
-            /* stroke-dasharray: 1.5; */
+        .leaflet-control-layers-list {
+            color: #333;
         }
 
-        .voronoi {
-            fill: transparent;
+        .show1 {
+            display: block;
         }
+
+        #baselayerDropdown .leaflet-control-layers-selector {
+            position: absolute;
+            left: -100vw;
+        }
+
+        #radioText:hover {
+            font-weight: 600;
+            color: #0088A3;
+        }
+
+        .leaflet-control-layers-selector:checked~#radioText {
+            font-weight: 600;
+            color: #0088A3;
+            text-decoration: underline;
+        }
+
+        #globe-icon {
+            margin-right: 2px;
+            margin-top: -2px;
+            margin-left: -2px;
+        }
+
+        .globe {
+            width: 30px;
+            height: 30px;
+        }
+
+        #glacier-btn-dropdown {
+            display: inline-block;
+            background-color: #009DBD;
+            color: #fff;
+            border-radius: 18px;
+            text-align: center;
+            transition: background-color 0.125s,
+                border-color 0.125s,
+                color 0.125s;
+        }
+
+        #glacier-btn-dropdown:hover {
+            background-color: #0088A3;
+            transition: background-color 0.125s,
+                border-color 0.125s,
+                color 0.125s;
+        }
+
+        .btn--s {
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 18px;
+            padding: 5px 12px;
+        }
+
+        .glacierDropdown {
+            margin-top: -2px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content2 {
+            display: none;
+            position: absolute;
+            background-color: white;
+            opacity: 1;
+            right: 0px;
+            margin-top: 6px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            width: 154px;
+            box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            border-radius: 5px;
+            max-height: 95vh;
+            overflow: auto;
+        }
+
+        #dropdown-list2 {
+            text-decoration: none;
+            display: block;
+            color: #333;
+            line-height: 1.5;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 0px 10px 10px 16px;
+        }
+
+        #dropdown-list2 :hover {
+            font-weight: 600;
+            color: #0088A3;
+        }
+
+        #dropdown-list2 ::selection {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .show2 {
+            display: block;
+        }
+
+        .highlight {
+            font-weight: 600;
+            color: #0088A3;
+        }
+
+        .leaflet-control-scale-line {
+            border: 1px solid #333;
+            border-top: none;
+            line-height: .7;
+            padding: 2px 5px 1px;
+            font-size: 9px;
+            white-space: nowrap;
+            overflow: hidden;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, .5);
+        }
+
+        .leaflet-control-scale-line:not(:first-child) {
+            border-top: 1px solid #333;
+            border-bottom: none;
+            margin-top: 1px;
+        }
+
+        .leaflet-control-scale-line:not(:first-child):not(:last-child) {
+            border-bottom: 1px solid #333;
+        }
+
     </style>
 </head>
 
 <body>
-    <div>
-        <div id="ui-controls">
-            <select id="dropdown">
-                <option value="conductivity" title="Conductivity (S/m)">Conductivity </option>
-                <option value="sigma_t" title="Density (kg/m&sup3;)">Density </option>
-                <option value="oxygen" title="Dissolved O&#x2082; (ml/l)">Dissolved O&#x2082; </option>
-                <option value="fluorescence" title="Fluorescence (mg/m&sup3;)">Fluorescence </option>
-                <option value="par" title="PAR (uE/m&sup2; * sec)">PAR </option>
-                <option value="salinity" title="Salinity (PSU)" selected>Salinity </option>
-                <option value="temperature" title="Temperature (&#8451; )">Temperature </option>
-                <option value="obs" title="Backscatterence (NTU)">Turbidity </option>
-            </select>
+    <div class="navbarParent">
+        <div class="navbar">
+            <div class="fullTitle">
+                <div class="fullTitleText">
+                    <span class="navbar-title">Glacier Bay National Park 2019 CTD Oceanographic Monitoring Observations
+                    </span>
+                </div>
+            </div>
+
+            <nav class="main-nav">
+                <div class="flex-parent-inline" id="icon-group">
+                    <a class="navbar-icon" href="https://github.com/efano/GNP-glaciers/blob/master/README.md"
+                        target="_blank" id="info-icon" title="Project Information">
+                        <svg class="icon mr6 info">
+                            <use xlink:href="#icon-info" />
+                        </svg>
+                    </a>
+                    <div class="baselayerDropdown">
+                        <button class="btn btn--white" id="baselayer-btn-dropdown" onclick="baselayerDropdownFunction()"
+                            title="Select Basemap">
+                            <div class="navbar-icon" id="layers-icon">
+                                <svg class="icon mr6 grid">
+                                    <use xlink:href="#icon-grid" />
+                                </svg>
+                            </div>
+                        </button>
+                        <div id="baselayerDropdownList" class="dropdown-content1">
+                            <div id="baselayerDropdown"></div>
+                        </div>
+                    </div>
+                    <div class="navbar-icon" href="#" id="globe-icon" title="Zoom to Park Extent">
+                        <svg class="icon mr6 globe">
+                            <use xlink:href="#icon-globe" />
+                        </svg>
+                    </div>
+
+                    <div class="glacierDropdown">
+                        <button onclick="glacierDropdownFunction()" class="btn btn--s" id="glacier-btn-dropdown">Select
+                            Station &thinsp;&#9662;</button>
+                        <div id="glacierDropdownList" class="dropdown-content2">
+                            <ul id="dropdown-list2"></ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
         </div>
-
-        <br>
-
-        <div class="wrapper" id="wrapper"></div>
-
     </div>
 
-    <script src="./js/d3-delaunay.min.js"></script>
+    <div id="map">
+        <div class="flex-child loading" id="loader"></div>
+    </div>
+
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script async defer src="https://api.mapbox.com/mapbox-assembly/v0.24.0/assembly.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet-src.js"></script>
+    <script src="js/leaflet-svg-shape-markers.js"></script>
 
     <script>
-        let attribute = "salinity"
-        let label = "Salinity (PSU)"
-
-        // switch between charts
-        //$('#wrapper').hide();
-        buildUI();
-
-        function buildUI() {
-            $('select[id="dropdown"]').change(function () {
-                $("#wrapper").empty();
-                attribute = this.value;
-                label = this.options[this.selectedIndex].title
-                drawChart();
-            });
+        // navbar dropdowns
+        // show baselayer dropdown menu
+        function baselayerDropdownFunction() {
+            document.getElementById("baselayerDropdownList").classList.toggle("show1");
         }
-
-        async function drawChart() {
-
-            // access data
-            const dataset = await d3.csv("data/GLBA_CTD_Test.csv")
-            //console.log("DATASET: ", dataset);
-            const yAccessor = d => +d.depth * -1;
-            const xAccessor = d => +d[attribute];
-
-            // create chart dimensions
-            let dimensions = {
-                width: 300,
-                height: 300,
-                margin: {
-                    top: 15,
-                    right: 15,
-                    bottom: 40,
-                    left: 60,
-                },
+        window.addEventListener('click', function (event) {
+            if (!event.target.matches('#baselayer-btn-dropdown')) {
+                const dropdown1 = document.getElementsByClassName("dropdown-content1");
+                let i;
+                for (i = 0; i < dropdown1.length; i++) {
+                    const openDropdown1 = dropdown1[i];
+                    if (openDropdown1.classList.contains('show1')) {
+                        openDropdown1.classList.remove('show1');
+                    }
+                }
             }
+        });
 
-            dimensions.boundedWidth = dimensions.width -
-                dimensions.margin.left -
-                dimensions.margin.right
-            dimensions.boundedHeight = dimensions.height -
-                dimensions.margin.top -
-                dimensions.margin.bottom
-
-            // draw canvas
-            const wrapper = d3.select("#wrapper")
-                .append("svg")
-                .attr("width", dimensions.width)
-                .attr("height", dimensions.height)
-
-            const bounds = wrapper.append("g")
-                .style("transform", `translate(${
-                    dimensions.margin.left
-                }px, ${
-                    dimensions.margin.top
-                }px)`)
-
-            // create scales
-            const yScale = d3.scaleLinear()
-                .domain(d3.extent(dataset, yAccessor))
-                .range([dimensions.boundedHeight, 0])
-                .nice()
-
-            const xScale = d3.scaleLinear()
-                .domain(d3.extent(dataset, xAccessor))
-                .range([0, dimensions.boundedWidth])
-                .nice()
-
-            // create gridlines
-            const gridlinesY = d3.axisTop()
-                .tickFormat("")
-                .tickSize(-dimensions.boundedHeight)
-                .scale(xScale);
-
-            bounds.append("g")
-                .attr("class", "grid")
-                .call(gridlinesY);
-
-            const gridlinesX = d3.axisLeft()
-                .tickFormat("")
-                .tickSize(-dimensions.boundedWidth)
-                .scale(yScale);
-
-            bounds.append("g")
-                .attr("class", "grid")
-                .call(gridlinesX);
-
-            // draw line 
-            const lineGenerator = d3.line()
-                .x(d => xScale(xAccessor(d)))
-                .y(d => yScale(yAccessor(d)))
-                .curve(d3.curveMonotoneX);
-
-            const line = bounds.append("path")
-                .attr("d", lineGenerator(dataset))
-                .attr("fill", "none")
-                .attr("stroke", "#222")
-                .attr("stroke-width", 1.5)
-                .attr("class", "line")
-
-            // draw points 
-            const dots = bounds.selectAll("circle")
-                .data(dataset, d => d[0])
-
-            const newDots = dots.enter().append("circle")
-
-            const allDots = newDots.merge(dots)
-                .attr("cx", d => xScale(xAccessor(d)))
-                .attr("cy", d => yScale(yAccessor(d)))
-                .transition()
-                .delay(760)
-                .attr("r", 1)
-                //.attr("fill", "red")
-                .attr("stroke", "red")
-
-            const oldDots = dots.exit()
-                .remove()
-
-            // draw peripherals
-            const yAxisGenerator = d3.axisLeft()
-                .scale(yScale)
-                .ticks(5)
-
-            const yAxis = bounds.append("g")
-                .call(yAxisGenerator)
-
-            const yAxisLabel = yAxis.append("text")
-                .attr("class", "y-axis-label")
-                .attr("fill", "#7E7E7E")
-                .attr("transform", "rotate(-90)")
-                .attr("x", -dimensions.boundedHeight / 2)
-                .attr("y", -dimensions.margin.left + 26)
-                .attr("text-anchor", "middle")
-                .html("Depth (m)");
-
-            const xAxisGenerator = d3.axisBottom()
-                .scale(xScale)
-                .ticks(5)
-
-            const xAxis = bounds.append("g")
-                .call(xAxisGenerator)
-                .style("transform", `translateY(${
-                    (dimensions.boundedHeight)
-                }px)`)
-
-            const xAxisLabel = xAxis.append("text")
-                .attr("class", "x-axis-label")
-                .attr("fill", "#7E7E7E")
-                .attr("x", dimensions.boundedWidth / 2)
-                .attr("y", dimensions.margin.bottom - 6)
-                .attr("text-anchor", "middle")
-                .html(label)
-
-            // animation
-            const totalLineLength = line.node().getTotalLength();
-
-            line
-                .attr("stroke-dasharray", totalLineLength + " " + totalLineLength)
-                .attr("stroke-dashoffset", totalLineLength)
-                .transition()
-                .duration(750)
-                .ease(d3.easeLinear)
-                .attr("stroke-dashoffset", 0);
-
-            // create voroni polygons for tooltip hover interactions
-            const delaunay = d3.Delaunay.from(
-                dataset,
-                d => xScale(xAccessor(d)),
-                d => yScale(yAccessor(d)),
-            )
-            const voronoi = delaunay.voronoi()
-            voronoi.xmax = dimensions.boundedWidth
-            voronoi.ymax = dimensions.boundedHeight
-
-            bounds.selectAll(".voronoi")
-                .data(dataset)
-                .enter().append("path")
-                .attr("class", "voronoi")
-                .attr("d", (d, i) => voronoi.renderCell(i))
-                //.attr("stroke", "green")
-                .on("mouseenter", onMouseEnter)
-                .on("mouseleave", onMouseLeave)
-
-            // create tooltip
-            const tooltip = d3.select("body")
-                .append("div")
-                .attr("class", "tooltip")
-                .style("position", "absolute")
-                .style("z-index", "10")
-                .style("visibility", "hidden")
-
-            return tooltip
-                .style("visibility", "visible")
-                .html("<span>" +
-                    "<div class='tooltip-title'>" + "Depth: &thinsp;" + "<span class='tooltip-num' id='depth'>" + "</span></div>" +
-                    "<hr>" +
-                    "<div class='tooltip-text'>" + "Conductivity: &thinsp;" + "<span class='tooltip-num' id='conductivity'>" +
-                    "</span></div>" +
-                    "<div class='tooltip-text'>" + "Density: &thinsp;" + "<span class='tooltip-num' id='sigma_t'>" +
-                    "</span></div>" +
-                    "<div class='tooltip-text'>" + "Dissolved O&#x2082;: &thinsp;" + "<span class='tooltip-num' id='oxygen'>" +
-                    "</span></div>" +
-                    "<div class='tooltip-text'>" + "Fluorescence: &thinsp;" +
-                    "<span class='tooltip-num' id='fluorescence'>" + "</span></div>" +
-                    "<div class='tooltip-text'>" + "PAR: &thinsp;" + "<span class='tooltip-num' id='par'>" +
-                    "</span></div>" +
-                    "<div class='tooltip-text'>" + "Salinity: &thinsp;" + "<span class='tooltip-num' id='salinity'>" +
-                    "</span></div>" +
-                    "<div class='tooltip-text'>" + "Temperature: &thinsp;" + "<span class='tooltip-num' id='temperature'>" +
-                    "</span></div>" +
-                    "<div class='tooltip-text'>" + "Turbidity: &thinsp;" + "<span class='tooltip-num' id='obs'>" +
-                    "</span></div>" +
-                    "</span>")
-
-            function onMouseEnter(datum) {
-                const dayDot = bounds.append("circle")
-                    .attr("class", "tooltipDot")
-                    .attr("cx", xScale(xAccessor(datum)))
-                    .attr("cy", yScale(yAccessor(datum)))
-                    .attr("r", 4.5)
-                    .style("fill", "red")
-                    .style("stroke", "black")
-                    .style("pointer-events", "none")
-
-                const formatDepth = d => `${d3.format(".0f")(d)} meters`
-                tooltip.select("#depth")
-                    .text(formatDepth(yAccessor(datum)))
-
-                const formatConductivity = d => `${d3.format(".2f")(d)}`
-                tooltip.select("#conductivity")
-                    .text(formatConductivity(datum.conductivity))
-
-                const formatDensity = d => `${d3.format(".2f")(d)}`
-                tooltip.select("#sigma_t")
-                    .text(formatDensity(datum.sigma_t))
-
-                const formatOxygen = d => `${d3.format(".2f")(d)}`
-                tooltip.select("#oxygen")
-                    .text(formatOxygen(datum.oxygen))
-
-                const formatFluorescence = d => `${d3.format(".2f")(d)}`
-                tooltip.select("#fluorescence")
-                    .text(formatFluorescence(datum.fluorescence))
-
-                const formatPAR = d => `${d3.format(".2f")(d)}`
-                tooltip.select("#par")
-                    .text(formatPAR(datum.par))
-
-                const formatSalinity = d => `${d3.format(".2f")(d)}`
-                tooltip.select("#salinity")
-                    .text(formatSalinity(datum.salinity))
-
-                const formatTemperature = d => `${d3.format(".2f")(d)}`
-                tooltip.select("#temperature")
-                    .text(formatTemperature(datum.temperature))
-
-                const formatTurbidity = d => `${d3.format(".2f")(d)}`
-                tooltip.select("#obs")
-                    .text(formatTurbidity(datum.obs))
-
-                const x = xScale(xAccessor(datum)) +
-                    dimensions.margin.left
-                const y = yScale(yAccessor(datum)) +
-                    dimensions.margin.top
-
-                tooltip.style("transform", `translate(` +
-                    `calc( -50% + ${x}px),` +
-                    `calc(-100% + ${y}px)` +
-                    `)`)
-
-                tooltip.style("opacity", 1)
-            }
-
-            function onMouseLeave() {
-                d3.selectAll(".tooltipDot")
-                    .remove()
-
-                tooltip.style("opacity", 0)
-            }
-
+        // basemaps
+        const oceanESRI = L.tileLayer(
+            'https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',{
+                attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community',
+            })
+        const topoESRI = L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community',
+            });
+        const imageryESRI = L.tileLayer(
+            'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community',
+            });
+        const nationalGeo = L.tileLayer(
+            'https://server.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',{
+                attribution: 'National Geographic, Esri, Garmin, HERE, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, increment P Corp.',
+            })
+        const topoUSGS = L.tileLayer(
+            'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community',
+            });
+        
+        const options = {
+            center: [58.7, -136.5],
+            zoom: 9,
+            maxZoom: 16,
+            zoomSnap: .1,
+            layers: imageryESRI,
         };
-        drawChart();
+
+        const map = L.map('map', options);
+
+        let baseLayers = {
+            "ESRI Ocean": oceanESRI, 
+            "ESRI Topo": topoESRI,
+            "ESRI Imagery": imageryESRI,
+            "National Geographic": nationalGeo,
+            "USGS Topo": topoUSGS,
+        };
+
+        // basemap legend
+        const control = L.control.layers(baseLayers, null, {
+            collapsed: false,
+        }).addTo(map);
+
+        // move baselayer control icon to navbar
+        let htmlObject = control.getContainer();
+        // get the desired parent node
+        let newParent = document.getElementById('baselayerDropdown');
+        // append the node to the new parent, recursively searching out and re-parenting nodes
+        function setParent(el, newParent) {
+            newParent.appendChild(el);
+        };
+        setParent(htmlObject, newParent);
+
+        // assign id to basemap legend to hide radio buttons
+        $('#baselayerDropdown .leaflet-control-layers .leaflet-control-layers-list .leaflet-control-layers-base label div span')
+            .attr('id', 'radioText');
+
+        // create scalebar
+        L.control.scale({
+            position: 'bottomright',
+            metric: true,
+            maxWidth: 120,
+        }).addTo(map);
+
+
+
+
+        $('#loader').remove();
     </script>
 </body>
 
