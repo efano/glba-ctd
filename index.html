@@ -11,9 +11,7 @@
 
     <link href="https://api.mapbox.com/mapbox-assembly/v0.24.0/assembly.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Nunito:wght@900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -21,7 +19,7 @@
             margin: 0;
             padding: 0;
             cursor: default !important;
-            font-family: 'Lato', sans-serif;
+            font-family: 'Roboto', sans-serif;
         }
 
         html {
@@ -54,8 +52,8 @@
         }
 
         .navbarParent {
-            background: white;
-            box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+            background: #135154;
+            box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4);
             position: fixed;
             top: 0;
             left: 0;
@@ -83,8 +81,8 @@
 
         .navbar-title {
             font-size: 26px;
-            font-weight: bold;
-            color: #333;
+            font-weight: 500;
+            color: whitesmoke;
         }
 
         #icon-group {
@@ -97,12 +95,13 @@
 
         .navbar-icon {
             font-size: 26px;
-            color: #009DBD;
+            color: whitesmoke;
+            background-color: #135154;
 
         }
 
         .navbar-icon:hover {
-            color: #0088A3;
+            color: #C1D6D6;
         }
 
         img {
@@ -111,31 +110,20 @@
         }
 
         @media (max-width: 1275px) {
-            .vl {
-                display: none;
+            .navbar-title {
+                font-size: 16px;
             }
+        }
 
-            .navbar-subtitle {
-                display: none;
+        @media (max-width: 800px) {
+            .navbar-title {
+                font-size: 10px;
             }
         }
 
         @media (max-width: 615px) {
             .navbar-title {
-                display: inline-block;
-                word-spacing: 9999999px;
                 font-size: 7px;
-                line-height: 1.3;
-                padding-right: 10px;
-                margin-top: -3px;
-            }
-
-            .vl {
-                display: none;
-            }
-
-            .navbar-subtitle {
-                display: none;
             }
 
             .leaflet-control-attribution {
@@ -143,16 +131,8 @@
             }
         }
 
-        @media (max-width: 350px) {
+        @media (max-width: 510px) {
             .navbar-title {
-                display: none;
-            }
-
-            .vl {
-                display: none;
-            }
-
-            .navbar-subtitle {
                 display: none;
             }
 
@@ -185,7 +165,7 @@
         .leaflet-control-layers {
             box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
             border-radius: 5px;
-            background: white;
+            background: whitesmoke;
             min-width: 8.5rem;
             padding: 8px 8px 8px 14px;
         }
@@ -218,13 +198,13 @@
         }
 
         #radioText:hover {
-            font-weight: 600;
-            color: #0088A3;
+            font-weight: 500;
+            color: #259AA1;
         }
 
         .leaflet-control-layers-selector:checked~#radioText {
-            font-weight: 600;
-            color: #0088A3;
+            font-weight: 500;
+            color: #259AA1;
             text-decoration: underline;
         }
 
@@ -241,8 +221,8 @@
 
         #glacier-btn-dropdown {
             display: inline-block;
-            background-color: #009DBD;
-            color: #fff;
+            background-color: whitesmoke;
+            color: #135154;
             border-radius: 18px;
             text-align: center;
             transition: background-color 0.125s,
@@ -251,7 +231,7 @@
         }
 
         #glacier-btn-dropdown:hover {
-            background-color: #0088A3;
+            background-color: #C1D6D6;
             transition: background-color 0.125s,
                 border-color 0.125s,
                 color 0.125s;
@@ -259,7 +239,7 @@
 
         .btn--s {
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 500;
             line-height: 18px;
             padding: 5px 12px;
         }
@@ -444,7 +424,7 @@
             });
         
         const options = {
-            center: [58.7, -136.5],
+            center: [58.7, -136.7],
             zoom: 9,
             maxZoom: 16,
             zoomSnap: .1,
@@ -454,11 +434,11 @@
         const map = L.map('map', options);
 
         let baseLayers = {
+            "USGS Topo": topoUSGS,
+            "ESRI Imagery": imageryESRI,
             "ESRI Ocean": oceanESRI, 
             "ESRI Topo": topoESRI,
-            "ESRI Imagery": imageryESRI,
             "National Geographic": nationalGeo,
-            "USGS Topo": topoUSGS,
         };
 
         // basemap legend
