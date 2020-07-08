@@ -96,7 +96,7 @@
         }
 
         .navbar-icon {
-            font-size: 26px;
+            font-size: 28px;
             color: #dce8e8;
             background-color: #135154;
 
@@ -173,7 +173,7 @@
         #baselayerDropdown {
             margin-top: -3px;
             margin-left: -60px;
-            color: #333;
+            color: #222;
             line-height: 1.5;
             font-size: 12px;
             font-weight: 500;
@@ -182,7 +182,7 @@
 
         /* #baselayerDropdown ::selection {
             font-weight: 600;
-            color: #333;
+            color: #222;
         } */
 
         .leaflet-control-layers-list {
@@ -220,8 +220,23 @@
             height: 30px;
         }
 
+        .leaflet-container .leaflet-control-attribution {
+            background: rgba(245, 245, 245, 0.6);
+            font-size: 9px;
+        }
+
+        #me {
+            color: #1179a6;
+            font-weight: 500;
+        }
+
+        #me:hover {
+            color: #e702c4;
+            text-decoration: underline;
+        }
+
         .leaflet-control-scale-line {
-            border: 1px solid #333;
+            border: 1px solid #222;
             border-top: none;
             line-height: .7;
             padding: 2px 5px 1px;
@@ -230,17 +245,17 @@
             overflow: hidden;
             -moz-box-sizing: border-box;
             box-sizing: border-box;
-            background: rgba(255, 255, 255, .5);
+            background: rgba(245, 245, 245, .6);
         }
 
         .leaflet-control-scale-line:not(:first-child) {
-            border-top: 1px solid #333;
+            border-top: 1px solid #222;
             border-bottom: none;
             margin-top: 1px;
         }
 
         .leaflet-control-scale-line:not(:first-child):not(:last-child) {
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid #222;
         }
 
         .stationTooltipCoreY {
@@ -248,7 +263,7 @@
             border: transparent;
             box-shadow: none;
             color: #FF00D8;
-            text-shadow: -1px -1px 0 #333, 1px -1px 0 #333, -1px 1px 0 #333, 1px 1px 0 #333;
+            text-shadow: -1px -1px 0 #222, 1px -1px 0 #222, -1px 1px 0 #222, 1px 1px 0 #222;
             font-size: 11px;
             font-weight: 600;
             left: 10px;
@@ -260,11 +275,98 @@
             border: transparent;
             box-shadow: none;
             color: #00FCFF;
-            text-shadow: -1px -1px 0 #333, 1px -1px 0 #333, -1px 1px 0 #333, 1px 1px 0 #333;
+            text-shadow: -1px -1px 0 #222, 1px -1px 0 #222, -1px 1px 0 #222, 1px 1px 0 #222;
             font-size: 11px;
             font-weight: 600;
             left: 10px;
             top: -6px;
+        }
+
+        .pointLegend {
+            background-color: whitesmoke;
+            box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            left: 11px;
+            bottom: 11px;
+            width: 210px;
+            position: absolute;
+            z-index: 950;
+            max-height: calc(100vh - 0px - 140px);
+            overflow-y: auto;
+            opacity: 0.9;
+            padding-bottom: 16px;
+        }
+
+        .pointLegend h4 {
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.1px;
+            margin-top: 12px;
+            margin-left: 15px;
+        }
+
+        .pointLegend p {
+            color: #222;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        #symbolCoreY {
+            color: #FF00D8;
+            text-shadow: -0.5px -0.5px 0 #222, 0.5px -0.5px 0 #222, -0.5px 0.5px 0 #222, 0.5px -0.5px 0 #222;
+            border-width: 2px;
+            font-size: 40px;
+            margin-left: 18px;
+        }
+
+        #symbolCoreN {
+            color: #00FCFF;
+            text-shadow: -0.5px -0.5px 0 #222, 0.5px -0.5px 0 #222, -0.5px 0.5px 0 #222, 0.5px -0.5px 0 #222;
+            border-width: 2px;
+            font-size: 40px;
+            margin-left: 18px;
+        }
+
+        #coreY, #coreN {
+            margin-left: 44px;
+            margin-top: -14px;
+            line-height: 1.0em;
+        }
+
+        #pointLegendSm {
+            background-color: whitesmoke;
+            box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            left: 11px;
+            bottom: 11px;
+            width: 36px;
+            height: 34px;
+            position: absolute;
+            z-index: 950;
+        }
+
+        .legend-icon {
+            height: 26px;
+            width: 26px;
+            margin-left: 5px;
+            margin-top: 5px;
+            opacity: 1;
+        }
+
+        .legend-icon:hover {
+            background-color: white;
+        }
+
+        .closePtIcon {
+            float: right;
+            height: 18px;
+            width: 18px;
+            padding: 2px;
+            opacity: 0.8;
+        }
+
+        .closePtIcon:hover {
+            opacity: 1.0;
         }
     </style>
 </head>
@@ -274,7 +376,7 @@
         <div class="navbar">
             <div class="fullTitle">
                 <div class="fullTitleText">
-                    <span class="navbar-title">Glacier Bay National Park 2019 Oceanographic Monitoring Observations
+                    <span class="navbar-title">Glacier Bay 2019 Oceanographic Monitoring Observations
                     </span>
                 </div>
             </div>
@@ -301,7 +403,7 @@
                             <div id="baselayerDropdown"></div>
                         </div>
                     </div>
-                    
+
                     <div class="navbar-icon" href="#" id="globe-icon" title="Zoom to Park Extent">
                         <svg class="icon mr6 globe">
                             <use xlink:href="#icon-globe" />
@@ -316,6 +418,24 @@
         <div class="flex-child loading" id="loader"></div>
     </div>
 
+    <div hidden id="pointLegendSm" class="pointLegendSm">
+        <div class="legendIcon" title="Maximize Legend">
+            <img class="legend-icon" src="icons/legend.svg">
+        </div>
+    </div>
+
+    <!-- point legend -->
+    <div id="pointLegend" class="pointLegend">
+        <div class="legendPtCloseIcon" title="Minimize Legend">
+            <img class="closePtIcon" src="icons/close.svg">
+        </div>
+        <h4>CTD Sampling Locations</h4>
+        <p id="symbolCoreY">&#x25B4;</p>
+        <p class="pointLegendText" id="coreY">Stations measured 9x/year</p>
+        <p id="symbolCoreN">&#x25B4;</p>
+        <p class="pointLegendText" id="coreN">Stations measured 2x/year</p>
+    </div>
+
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -324,7 +444,6 @@
     <script src="js/leaflet-svg-shape-markers.js"></script>
 
     <script>
-        
         // show baselayer dropdown menu
         function baselayerDropdownFunction() {
             document.getElementById("baselayerDropdownList").classList.toggle("show1");
@@ -345,23 +464,29 @@
         // basemaps
         const oceanESRI = L.tileLayer(
             'https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community',
+                attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community' + '<br>' +
+                    "<span id='appDevBy'>Application developed by: </span><a id='me' href='https://efano.github.io/' target='_blank'>Lis Fano</a>",
             })
         const topoESRI = L.tileLayer(
             'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community',
+                attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community' + '<br>' +
+                    "<span id='appDevBy'>Application developed by: </span><a id='me' href='https://efano.github.io/' target='_blank'>Lis Fano</a>",
             });
         const imageryESRI = L.tileLayer(
             'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community',
+                attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community' + '<br>' +
+                    "<span id='appDevBy'>Application developed by: </span><a id='me' href='https://efano.github.io/' target='_blank'>Lis Fano</a>",
             });
         const nationalGeo = L.tileLayer(
             'https://server.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'National Geographic, Esri, Garmin, HERE, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, increment P Corp.',
+                attribution: 'National Geographic, Esri, Garmin, HERE, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, increment P Corp.' +
+                    '<br>' +
+                    "<span id='appDevBy'>Application developed by: </span><a id='me' href='https://efano.github.io/' target='_blank'>Lis Fano</a>",
             })
         const topoUSGS = L.tileLayer(
             'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community',
+                attribution: 'Tiles &copy; Esri, USGS, NPS, and the GIS User Community' + '<br>' +
+                    "<span id='appDevBy'>Application developed by: </span><a id='me' href='https://efano.github.io/' target='_blank'>Lis Fano</a>",
             });
 
         const options = {
@@ -393,6 +518,7 @@
         let newParent = document.getElementById('baselayerDropdown');
         // append the node to the new parent, recursively searching out and re-parenting nodes
         setParent(htmlObject, newParent);
+
         function setParent(el, newParent) {
             newParent.appendChild(el);
         };
@@ -424,8 +550,8 @@
                 style: function (feature, layer) {
                     return {
                         fillOpacity: 0,
-                        color: '#989898',
-                        weight: 1.5,
+                        color: '#0088A3',
+                        weight: 1.75,
                         lineJoin: 'round',
                         dashArray: '2,4'
                     };
@@ -445,6 +571,9 @@
             });
 
             drawPts(stationPoints);
+            drawPtLegend();
+            togglePtLegend();
+
             // draw stations 
             function drawPts(stationPoints) {
                 stationPoints.eachLayer(function (layer) {
@@ -454,7 +583,7 @@
                     if (type === "y") {
                         layer.setStyle({
                             shape: "triangle",
-                            color: '#333',
+                            color: '#222',
                             fillColor: "#FF00D8",
                             fillOpacity: 1,
                             weight: 1.3,
@@ -468,7 +597,7 @@
                     } else if (type === "n") {
                         layer.setStyle({
                             shape: "triangle",
-                            color: '#333',
+                            color: '#222',
                             fillColor: "#00FCFF",
                             fillOpacity: 1,
                             weight: 1.3,
@@ -506,6 +635,28 @@
                     map.flyToBounds(stationPoints.getBounds(), {
                         padding: [30, 30]
                     });
+                });
+            };
+
+            // draw pt legend
+            function drawPtLegend() {
+                if ($(".pointLegendSm").is(":visible")) {
+                    $(".pointLegendSm").fadeIn(1000);
+                } else {
+                    $(".pointLegend").fadeIn(1500);
+                }
+            };
+
+            // toggle pt legend
+            function togglePtLegend() {
+                $('.legendPtCloseIcon').click(function () {
+                    $('.pointLegend').fadeOut();
+                    $('.pointLegendSm').fadeIn();
+                });
+
+                $('.pointLegendSm').click(function () {
+                    $('.pointLegendSm').fadeOut();
+                    $('.pointLegend').fadeIn();
                 });
             };
         };
