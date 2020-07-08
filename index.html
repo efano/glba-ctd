@@ -11,7 +11,7 @@
 
     <link href="https://api.mapbox.com/mapbox-assembly/v0.24.0/assembly.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -160,20 +160,19 @@
             display: none;
             position: absolute;
             background-color: transparent;
-            padding-top: 6px;
-            z-index: 1001;
         }
 
         .leaflet-control-layers {
             box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
             border-radius: 5px;
-            background: whitesmoke;
-            min-width: 8.5rem;
-            padding: 8px 8px 8px 14px;
+            background: white;
+            min-width: 8rem;
+            padding: 8px 10px 8px 14px;
         }
 
         #baselayerDropdown {
             margin-top: -3px;
+            margin-left: -60px;
             color: #333;
             line-height: 1.5;
             font-size: 12px;
@@ -181,13 +180,13 @@
             opacity: 1;
         }
 
-        #baselayerDropdown ::selection {
+        /* #baselayerDropdown ::selection {
             font-weight: 600;
             color: #333;
-        }
+        } */
 
         .leaflet-control-layers-list {
-            color: #333;
+            color: #444;
         }
 
         .show1 {
@@ -201,12 +200,12 @@
 
         #radioText:hover {
             font-weight: 500;
-            color: #259AA1;
+            color: #0088A3;
         }
 
-        .leaflet-control-layers-selector:checked~#radioText {
+        .leaflet-control-layers-selector:checked~span #radioText {
             font-weight: 500;
-            color: #259AA1;
+            color: #0088A3;
             text-decoration: underline;
         }
 
@@ -220,83 +219,6 @@
             width: 30px;
             height: 30px;
         }
-
-        /* #glacier-btn-dropdown {
-            display: inline-block;
-            background-color: #dce8e8;
-            color: #135154;
-            border-radius: 7px;
-            text-align: center;
-            transition: background-color 0.125s,
-                border-color 0.125s,
-                color 0.125s;
-        }
-
-        #glacier-btn-dropdown:hover {
-            background-color: white;
-            transition: background-color 0.125s,
-                border-color 0.125s,
-                color 0.125s;
-        }
-
-        .btn--s {
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 18px;
-            padding: 5px 12px;
-        }
-
-        .glacierDropdown {
-            margin-top: -2px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-content2 {
-            display: none;
-            position: absolute;
-            background-color: white;
-            opacity: 1;
-            right: 0px;
-            margin-top: 6px;
-            padding-top: 8px;
-            padding-bottom: 8px;
-            width: 154px;
-            box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
-            z-index: 1001;
-            border-radius: 5px;
-            max-height: 95vh;
-            overflow: auto;
-        }
-
-        #dropdown-list2 {
-            text-decoration: none;
-            display: block;
-            color: #333;
-            line-height: 1.5;
-            font-size: 12px;
-            font-weight: 500;
-            padding: 0px 10px 10px 16px;
-        }
-
-        #dropdown-list2 :hover {
-            font-weight: 600;
-            color: #0088A3;
-        }
-
-        #dropdown-list2 ::selection {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .show2 {
-            display: block;
-        }*/
-
-        .highlight {
-            font-weight: 600;
-            color: #0088A3;
-        } 
 
         .leaflet-control-scale-line {
             border: 1px solid #333;
@@ -321,23 +243,28 @@
             border-bottom: 1px solid #333;
         }
 
-        .leaflet-tooltip {
-            border-radius: 5px;
-            box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
+        .stationTooltipCoreY {
+            background-color: transparent;
+            border: transparent;
+            box-shadow: none;
+            color: #FF00D8;
+            text-shadow: -1px -1px 0 #333, 1px -1px 0 #333, -1px 1px 0 #333, 1px 1px 0 #333;
+            font-size: 11px;
+            font-weight: 600;
+            left: 10px;
+            top: -6px;
         }
 
-        .tooltipTitle {
-            white-space: nowrap;
-            color: #333;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .tooltipText {
-            font-size: 1em;
-            font-weight: 400;
-            color: #333;
-            margin-top: -19px;
+        .stationTooltipCoreN {
+            background-color: transparent;
+            border: transparent;
+            box-shadow: none;
+            color: #00FCFF;
+            text-shadow: -1px -1px 0 #333, 1px -1px 0 #333, -1px 1px 0 #333, 1px 1px 0 #333;
+            font-size: 11px;
+            font-weight: 600;
+            left: 10px;
+            top: -6px;
         }
     </style>
 </head>
@@ -360,7 +287,8 @@
                             <use xlink:href="#icon-info" />
                         </svg>
                     </a>
-                    <div class="baselayerDropdown">
+
+                    <div class="baselayerDropdowns">
                         <button class="btn btn--white" id="baselayer-btn-dropdown" onclick="baselayerDropdownFunction()"
                             title="Select Basemap">
                             <div class="navbar-icon" id="layers-icon">
@@ -373,19 +301,12 @@
                             <div id="baselayerDropdown"></div>
                         </div>
                     </div>
+                    
                     <div class="navbar-icon" href="#" id="globe-icon" title="Zoom to Park Extent">
                         <svg class="icon mr6 globe">
                             <use xlink:href="#icon-globe" />
                         </svg>
                     </div>
-
-                    <!-- <div class="glacierDropdown">
-                        <button onclick="glacierDropdownFunction()" class="btn btn--s" id="glacier-btn-dropdown">Select
-                            Station &thinsp;&#9662;</button>
-                        <div id="glacierDropdownList" class="dropdown-content2">
-                            <ul id="dropdown-list2"></ul>
-                        </div>
-                    </div> -->
                 </div>
             </nav>
         </div>
@@ -403,7 +324,7 @@
     <script src="js/leaflet-svg-shape-markers.js"></script>
 
     <script>
-        // navbar dropdowns
+        
         // show baselayer dropdown menu
         function baselayerDropdownFunction() {
             document.getElementById("baselayerDropdownList").classList.toggle("show1");
@@ -454,11 +375,11 @@
         const map = L.map('map', options);
 
         let baseLayers = {
-            "USGS Topo": topoUSGS,
-            "ESRI Imagery": imageryESRI,
-            "ESRI Ocean": oceanESRI,
-            "ESRI Topo": topoESRI,
-            "National Geographic": nationalGeo,
+            "<span id='radioText'>USGS Topo</span>": topoUSGS,
+            "<span id='radioText'>ESRI Imagery</span>": imageryESRI,
+            "<span id='radioText'>ESRI Ocean</span>": oceanESRI,
+            "<span id='radioText'>ESRI Topo</span>": topoESRI,
+            "<span id='radioText'>National Geographic</span>": nationalGeo,
         };
 
         // basemap legend
@@ -471,14 +392,10 @@
         // get the desired parent node
         let newParent = document.getElementById('baselayerDropdown');
         // append the node to the new parent, recursively searching out and re-parenting nodes
+        setParent(htmlObject, newParent);
         function setParent(el, newParent) {
             newParent.appendChild(el);
         };
-        setParent(htmlObject, newParent);
-
-        // assign id to basemap legend to hide radio buttons
-        $('#baselayerDropdown .leaflet-control-layers .leaflet-control-layers-list .leaflet-control-layers-base label div span')
-            .attr('id', 'radioText');
 
         // create scalebar
         L.control.scale({
@@ -540,49 +457,44 @@
                             color: '#333',
                             fillColor: "#FF00D8",
                             fillOpacity: 1,
-                            weight: 1.2,
+                            weight: 1.3,
                             radius: 7,
                         })
+                        layer.bindTooltip(props['Station'], {
+                            className: 'stationTooltipCoreY',
+                            permanent: true,
+                            direction: 'center',
+                        });
                     } else if (type === "n") {
                         layer.setStyle({
                             shape: "triangle",
                             color: '#333',
                             fillColor: "#00FCFF",
                             fillOpacity: 1,
-                            weight: 1.2,
+                            weight: 1.3,
                             radius: 7,
                         })
+                        layer.bindTooltip(props['Station'], {
+                            className: 'stationTooltipCoreN',
+                            permanent: true,
+                            direction: 'center',
+                        });
                     };
-
-                    // tooltip
-                    layer.bindTooltip("<div class=tooltipTitle><b>" + "Station ID: " + props["Station"] +
-                                "</b></div><hr>" 
-                                // "<div class=tooltipText>" + "Area loss:&thinsp;" +
-                                // '<a class="tooltipPct" style="color:' + colorize(props.pctD) + '"> ' + (
-                                //     parseFloat(
-                                //         props["pctD"]) *
-                                //     100).toFixed(0) + "%" + '</a>', {
-                                //     opacity: 1
-                                // }
-                            );
 
                     //when mousing over a station point
                     layer.on('mouseover', function () {
                         layer.bringToFront();
-                        // provide a visual affordance
                         layer.setStyle({
-                            radius: 14
+                            radius: 15,
+                            weight: 2,
                         });
-                        // select the cooresponding list item and add the highlight class to make bold
-                        //$('#glacierList-' + props.num).addClass('highlight');
                     });
 
                     layer.on('mouseout', function () {
-                        // reset back to our base styling opacity
                         layer.setStyle({
-                            radius: 7
+                            radius: 7,
+                            weight: 1.3,
                         });
-                        //$('#glacierList-' + props.num).removeClass('highlight');
                     });
                 });
             };
