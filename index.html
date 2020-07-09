@@ -5,9 +5,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1.0, width=device-width">
-    <link rel="icon" type="image/svg+xml" href="icons/mountain-fav.svg">
+    <link rel="icon" type="image/svg+xml" href="icons/fav.svg">
 
-    <title>Test</title>
+    <title>Glacier Bay CTD</title>
 
     <link href="https://api.mapbox.com/mapbox-assembly/v0.24.0/assembly.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css" />
@@ -334,41 +334,6 @@
             line-height: 0.9em;
         }
 
-        /* #pointLegendSm {
-            background-color: whitesmoke;
-            box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
-            left: 11px;
-            bottom: 11px;
-            width: 36px;
-            height: 34px;
-            position: absolute;
-            z-index: 950;
-        } */
-
-        /* .legend-icon {
-            height: 26px;
-            width: 26px;
-            margin-left: 5px;
-            margin-top: 5px;
-            opacity: 1;
-        }
-
-        .legend-icon:hover {
-            background-color: white;
-        }
-
-        .closePtIcon {
-            float: right;
-            height: 18px;
-            width: 18px;
-            padding: 2px;
-            opacity: 0.8;
-        }
-
-        .closePtIcon:hover {
-            opacity: 1.0;
-        } */
     </style>
 </head>
 
@@ -529,19 +494,20 @@
         }).addTo(map);
 
         // use D3 fetch to request data with async requests
-        const parkBoundary = d3.json('data/boundary.json');
+        //const parkBoundary = d3.json('data/boundary.json');
         const allPoints = d3.json('data/stations.json');
 
         // use Promise to wait until data is all loaded
-        Promise.all([parkBoundary, allPoints])
+        Promise.all([allPoints])
             .then(
                 drawMap);
 
         function drawMap(data) {
 
             // pull out separate data arrays and assign to variables
+
             //const boundsData = data[0];
-            const ptData = data[1];
+            const ptData = data[0];
 
             // create a park boundary layer with the geojson data
             // const parkBounds = L.geoJson(boundsData, {
@@ -565,12 +531,10 @@
 
             // fit map bounds to feature extent
             map.fitBounds(stationPoints.getBounds(), {
-                padding: [30, 30]
+                padding: [50,50]
             });
 
             drawPts(stationPoints);
-            //drawPtLegend();
-            //togglePtLegend();
 
             // draw stations 
             function drawPts(stationPoints) {
@@ -631,11 +595,10 @@
             function extentIcon(stationPoints) {
                 $('#globe-icon').click(function () {
                     map.flyToBounds(stationPoints.getBounds(), {
-                        padding: [30, 30]
+                        padding: [30,30]
                     });
                 });
             };
-
             
         };
         $('#loader').remove();
