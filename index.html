@@ -287,7 +287,7 @@
             border-radius: 5px;
             left: 11px;
             bottom: 11px;
-            width: 202px;
+            width: 199px;
             position: absolute;
             z-index: 950;
             max-height: calc(100vh - 0px - 140px);
@@ -334,7 +334,7 @@
             line-height: 0.9em;
         }
 
-        #pointLegendSm {
+        /* #pointLegendSm {
             background-color: whitesmoke;
             box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
@@ -344,9 +344,9 @@
             height: 34px;
             position: absolute;
             z-index: 950;
-        }
+        } */
 
-        .legend-icon {
+        /* .legend-icon {
             height: 26px;
             width: 26px;
             margin-left: 5px;
@@ -368,7 +368,7 @@
 
         .closePtIcon:hover {
             opacity: 1.0;
-        }
+        } */
     </style>
 </head>
 
@@ -405,7 +405,7 @@
                         </div>
                     </div>
 
-                    <div class="navbar-icon" href="#" id="globe-icon" title="Zoom to Park Extent">
+                    <div class="navbar-icon" href="#" id="globe-icon" title="Zoom to Stations Extent">
                         <svg class="icon mr6 globe">
                             <use xlink:href="#icon-globe" />
                         </svg>
@@ -427,9 +427,6 @@
 
     <!-- point legend -->
     <div id="pointLegend" class="pointLegend">
-        <div class="legendPtCloseIcon" title="Minimize Legend">
-            <img class="closePtIcon" src="icons/close.svg">
-        </div>
         <h4>CTD Sampling Locations</h4>
         <p id="symbolCoreY">&#x25B4;</p>
         <p class="pointLegendText" id="coreY">Station measured 9x/year</p>
@@ -568,7 +565,7 @@
 
             // fit map bounds to feature extent
             map.fitBounds(stationPoints.getBounds(), {
-                padding: [50, 50]
+                padding: [30, 30]
             });
 
             drawPts(stationPoints);
@@ -639,27 +636,7 @@
                 });
             };
 
-            // draw pt legend
-            function drawPtLegend() {
-                if ($(".pointLegendSm").is(":visible")) {
-                    $(".pointLegendSm").fadeIn(1000);
-                } else {
-                    $(".pointLegend").fadeIn(1500);
-                }
-            };
-
-            // toggle pt legend
-            function togglePtLegend() {
-                $('.legendPtCloseIcon').click(function () {
-                    $('.pointLegend').fadeOut();
-                    $('.pointLegendSm').fadeIn();
-                });
-
-                $('.pointLegendSm').click(function () {
-                    $('.pointLegendSm').fadeOut();
-                    $('.pointLegend').fadeIn();
-                });
-            };
+            
         };
         $('#loader').remove();
     </script>
