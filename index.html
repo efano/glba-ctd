@@ -312,6 +312,7 @@
             border-width: 2px;
             font-size: 40px;
             margin-left: 18px;
+            
         }
 
         #symbolCoreN {
@@ -426,9 +427,9 @@
         </div>
         <h4>CTD Sampling Locations</h4>
         <p id="symbolCoreY">&#x25B4;</p>
-        <p class="pointLegendText" id="coreY">Stations measured 9x/year</p>
+        <p class="pointLegendText" id="coreY">Station measured 9x/year</p>
         <p id="symbolCoreN">&#x25B4;</p>
-        <p class="pointLegendText" id="coreN">Stations measured 2x/year</p>
+        <p class="pointLegendText" id="coreN">Station measured 2x/year</p>
     </div>
 
     <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -537,21 +538,21 @@
         function drawMap(data) {
 
             // pull out separate data arrays and assign to variables
-            const boundsData = data[0];
+            //const boundsData = data[0];
             const ptData = data[1];
 
             // create a park boundary layer with the geojson data
-            const parkBounds = L.geoJson(boundsData, {
-                style: function (feature, layer) {
-                    return {
-                        fillOpacity: 0,
-                        color: '#0088A3',
-                        weight: 1.75,
-                        lineJoin: 'round',
-                        dashArray: '2,4'
-                    };
-                }
-            }).addTo(map);
+            // const parkBounds = L.geoJson(boundsData, {
+            //     style: function (feature, layer) {
+            //         return {
+            //             fillOpacity: 0,
+            //             color: '#0088A3',
+            //             weight: 1.75,
+            //             lineJoin: 'round',
+            //             dashArray: '2,4'
+            //         };
+            //     }
+            // }).addTo(map);
 
             // create a point layer with the geojson data
             const stationPoints = L.geoJson(ptData, {
