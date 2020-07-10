@@ -82,7 +82,7 @@
         .navbar-title {
             font-size: 26px;
             font-weight: 500;
-            color: whitesmoke;
+            color: white;
             letter-spacing: .15px;
             ;
         }
@@ -433,6 +433,10 @@
         </div>
     </div>
 
+    <form hidden id="radio buttons">
+        <div id="radio-group"></div>
+    </form>
+
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -618,7 +622,7 @@
                         function updateChartLegend(stationPoints) {
                             const chartLegendTitle = "<div class='chartLegendMain'>" +
                                 "<h4 class='chartLegendTitle'>" +
-                                "Station Number " + num + "</h4></div>";
+                                "Station " + num + "</h4></div>";
                             $(".chartLegend").html(chartLegendTitle);
 
                             // add close button
@@ -629,16 +633,44 @@
                                 $('.pointLegend').fadeIn(1600);
                             });
 
+                            // filter initial num station # in csv 
+                            d3.csv("data/y2019.csv").then(function (data) {
+                                const ctdfilter1 = data.filter(function (d) {
+                                    return d.station === num
+                                });
+                                console.log(ctdfilter1);
 
-                            // filter num station # in csv and push into new array
+                                // get unique number of casts by date to dynamically 
+                                // create the number of radio buttons per station
+                                const ctdfilter2 = d3.map(ctdfilter1, function (d) {
+                                    return d.date_gmt;
+                                }).keys()
+                                console.log(ctdfilter2);
 
-                            // count number of casts in new array
+                                // dynamically create radio buttons
+                                let radioHTML = "";
+                                $.each(ctdfilter2, function (index, value) {
+                                    radioHTML +=
+                                        '<label><input type="radio" name="radio_group" value="' +
+                                        value + '" id="' + index + '"> ' + value + '</label><br>';
+                                });
+                                $("#radio-group").html(radioHTML);
+                                $(radioHTML).insertAfter(".chartLegendTitle");
 
-                            // create corresponding number of radio buttons in legend
 
-                            // create new array of filtered data by date in selected radio
+                                // create new array of filtered data by date in selected radio
 
-                            // draw d3 charts
+                                // draw d3 charts
+
+
+                            });
+
+
+
+
+
+
+
 
                         };
 
