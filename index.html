@@ -651,11 +651,14 @@
                                 let radioHTML = "";
                                 $.each(ctdfilter2, function (index, value) {
                                     radioHTML +=
-                                        '<label><input type="radio" name="radio_group" value="' +
-                                        value + '" id="' + index + '"> ' + value + '</label><br>';
+                                        '<label class="radio-container"><input type="radio" name="radio-basic" value="' +
+                                        value + '" id="' + index + '">' + '<div class="radio radio--gray mr6"> ' + '</div>' + value + 
+                                        '</label><br>';
                                 });
+
                                 $("#radio-group").html(radioHTML);
                                 $(radioHTML).insertAfter(".chartLegendTitle");
+                                
 
 
                                 // create new array of filtered data by date in selected radio
