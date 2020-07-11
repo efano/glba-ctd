@@ -287,7 +287,7 @@
             border-radius: 5px;
             left: 11px;
             bottom: 11px;
-            width: 190px;
+            width: 196px;
             position: absolute;
             z-index: 950;
             max-height: calc(100vh - 0px - 140px);
@@ -299,14 +299,14 @@
             font-size: 15px;
             font-weight: 500;
             letter-spacing: 0.1px;
-            margin-top: 10px;
-            margin-left: 10px;
+            margin-top: 12px;
+            margin-left: 12px;
             margin-bottom: -2px;
         }
 
         .pointLegend p {
             color: #222;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 500;
         }
 
@@ -315,7 +315,7 @@
             text-shadow: -0.5px -0.5px 0 #222, 0.5px -0.5px 0 #222, -0.5px 0.5px 0 #222, 0.5px -0.5px 0 #222;
             border-width: 2px;
             font-size: 34px;
-            margin-left: 16px;
+            margin-left: 12px;
 
         }
 
@@ -324,12 +324,12 @@
             text-shadow: -0.5px -0.5px 0 #222, 0.5px -0.5px 0 #222, -0.5px 0.5px 0 #222, 0.5px -0.5px 0 #222;
             border-width: 2px;
             font-size: 34px;
-            margin-left: 16px;
+            margin-left: 12px;
         }
 
         #coreY,
         #coreN {
-            margin-left: 40px;
+            margin-left: 34px;
             margin-top: -14px;
             line-height: 0.9em;
         }
@@ -360,7 +360,7 @@
         }
 
         .chartLegendTitle {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 500;
             letter-spacing: 0.1px;
             margin-top: 10px;
@@ -388,11 +388,11 @@
         }
 
         .radio {
-  border-radius: 50%;
-  height: 16px;
-  width: 16px;
-  
-}
+            border-radius: 50%;
+            height: 16px;
+            width: 16px;
+
+        }
 
         .radioText {
             color: #222;
@@ -655,7 +655,8 @@
                         function updateChartLegend(stationPoints) {
                             const chartLegendTitle = "<div class='chartLegendMain'>" +
                                 "<h4 class='chartLegendTitle'>" +
-                                "Station " + num + "</h4>" + "<hr>" + "<h6 class='chartMeasurementTitle'>" +
+                                "Station " + num + "</h4>" + "<hr>" +
+                                "<h6 class='chartMeasurementTitle'>" +
                                 "Measurement Dates " + "</h6></div>";
                             $(".chartLegend").html(chartLegendTitle);
 
@@ -686,14 +687,17 @@
                                 $.each(ctdfilter2, function (index, value) {
                                     radioHTML +=
                                         '<label class="radio-container"><input type="radio" name="radio-gray" value="' +
-                                        value + '" id="' + index + '">' + '<div class="radio radio--gray radio--s-label radio--darken75 mr6" id="' + index + '"> '
-                                         + '</div>' + '<div class="radioText">' + value + '</div></label>';
+                                        value + '" id="' + index + '">' +
+                                        '<div class="radio radio--gray radio--s-label radio--darken75 mr6" id="' +
+                                        index + '"> ' +
+                                        '</div>' + '<div class="radioText">' + value +
+                                        '</div></label>';
                                 });
-                                
+
                                 $("#radio-group").html(radioHTML);
                                 $(radioHTML).insertAfter(".chartLegendMain");
                                 $('input[name=radio-gray][id="0"]').prop('checked', true);
-                                
+
 
 
                                 // create new array of filtered data by date in selected radio
