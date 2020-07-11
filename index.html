@@ -360,12 +360,45 @@
         }
 
         .chartLegendTitle {
-            font-size: 17px;
+            font-size: 20px;
             font-weight: 500;
             letter-spacing: 0.1px;
             margin-top: 10px;
-            margin-left: 10px;
-            margin-bottom: -2px;
+            margin-left: 14px;
+            margin-bottom: 8px;
+        }
+
+        hr {
+            border-top: 1px solid #222;
+            margin-left: 14px;
+            margin-right: 14px;
+        }
+
+        .chartMeasurementTitle {
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.1px;
+            margin-top: 10px;
+            margin-left: 14px;
+            margin-bottom: 6px;
+        }
+
+        .radio-container {
+            margin-left: 14px;
+        }
+
+        .radio {
+  border-radius: 50%;
+  height: 16px;
+  width: 16px;
+  
+}
+
+        .radioText {
+            color: #222;
+            font-size: 12px;
+            font-weight: 500;
+            width: 50px;
         }
     </style>
 </head>
@@ -433,7 +466,7 @@
         </div>
     </div>
 
-    <form hidden id="radio buttons">
+    <form hidden id="radio-buttons">
         <div id="radio-group"></div>
     </form>
 
@@ -622,7 +655,8 @@
                         function updateChartLegend(stationPoints) {
                             const chartLegendTitle = "<div class='chartLegendMain'>" +
                                 "<h4 class='chartLegendTitle'>" +
-                                "Station " + num + "</h4></div>";
+                                "Station " + num + "</h4>" + "<hr>" + "<h6 class='chartMeasurementTitle'>" +
+                                "Measurement Dates " + "</h6></div>";
                             $(".chartLegend").html(chartLegendTitle);
 
                             // add close button
@@ -652,13 +686,12 @@
                                 $.each(ctdfilter2, function (index, value) {
                                     radioHTML +=
                                         '<label class="radio-container"><input type="radio" name="radio-gray" value="' +
-                                        value + '" id="' + index + '">' + '<div class="radio radio--gray mr6" id="' + index + '"> ' + '</div>' + value + 
-                                        '</label><br>';
-                                    
+                                        value + '" id="' + index + '">' + '<div class="radio radio--gray radio--s-label radio--darken75 mr6" id="' + index + '"> '
+                                         + '</div>' + '<div class="radioText">' + value + '</div></label>';
                                 });
                                 
                                 $("#radio-group").html(radioHTML);
-                                $(radioHTML).insertAfter(".chartLegendTitle");
+                                $(radioHTML).insertAfter(".chartLegendMain");
                                 $('input[name=radio-gray][id="0"]').prop('checked', true);
                                 
 
