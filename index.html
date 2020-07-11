@@ -651,13 +651,15 @@
                                 let radioHTML = "";
                                 $.each(ctdfilter2, function (index, value) {
                                     radioHTML +=
-                                        '<label class="radio-container"><input type="radio" name="radio-basic" value="' +
-                                        value + '" id="' + index + '">' + '<div class="radio radio--gray mr6"> ' + '</div>' + value + 
+                                        '<label class="radio-container"><input type="radio" name="radio-gray" value="' +
+                                        value + '" id="' + index + '">' + '<div class="radio radio--gray mr6" id="' + index + '"> ' + '</div>' + value + 
                                         '</label><br>';
+                                    
                                 });
-
+                                
                                 $("#radio-group").html(radioHTML);
                                 $(radioHTML).insertAfter(".chartLegendTitle");
+                                $('input[name=radio-gray][id="0"]').prop('checked', true);
                                 
 
 
