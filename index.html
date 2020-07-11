@@ -179,7 +179,7 @@
             margin-left: -60px;
             color: #222;
             line-height: 1.5;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 500;
             opacity: 1;
         }
@@ -360,7 +360,7 @@
         }
 
         .chartLegendTitle {
-            font-size: 22px;
+            font-size: 21px;
             font-weight: 500;
             letter-spacing: 0.1px;
             margin-top: 10px;
@@ -374,7 +374,7 @@
             margin-right: 14px;
         }
 
-        .chartMeasurementTitle {
+        .chartMeasurementDateTitle {
             font-size: 15px;
             font-weight: 500;
             letter-spacing: 0.1px;
@@ -398,7 +398,16 @@
             color: #222;
             font-size: 12px;
             font-weight: 500;
-            width: 50px;
+            width: 54px;
+        }
+
+        .chartMeasurementTitle {
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.1px;
+            margin-top: 10px;
+            margin-left: 14px;
+            margin-bottom: 6px;
         }
     </style>
 </head>
@@ -465,10 +474,6 @@
             <img class="closeIcon" src="icons/close.svg">
         </div>
     </div>
-
-    <form hidden id="radio-buttons">
-        <div id="radio-group"></div>
-    </form>
 
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
@@ -656,7 +661,7 @@
                             const chartLegendTitle = "<div class='chartLegendMain'>" +
                                 "<h4 class='chartLegendTitle'>" +
                                 "Station " + num + "</h4>" + "<hr>" +
-                                "<h6 class='chartMeasurementTitle'>" +
+                                "<h6 class='chartMeasurementDateTitle'>" +
                                 "Measurement Dates " + "</h6></div>";
                             $(".chartLegend").html(chartLegendTitle);
 
@@ -693,11 +698,13 @@
                                         '</div>' + '<div class="radioText">' + value +
                                         '</div></label>';
                                 });
-
-                                $("#radio-group").html(radioHTML);
                                 $(radioHTML).insertAfter(".chartLegendMain");
                                 $('input[name=radio-gray][id="0"]').prop('checked', true);
 
+                                const chartMeasurementTitle = "<div>" +
+                                "<h6 class='chartMeasurementTitle'>" +
+                                "Measurements " + "</h6></div>";
+                                $(chartMeasurementTitle).insertAfter(".radio-container:last");
 
 
                                 // create new array of filtered data by date in selected radio
