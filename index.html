@@ -409,6 +409,98 @@
             margin-left: 14px;
             margin-bottom: 6px;
         }
+
+        /* d3 css */
+        #dropdown {
+            margin-left: 14px;
+            margin-bottom: 16px;
+            width: 102px;
+            height: 20px;
+            border: none;
+            border-radius: 5px;
+            border:1px solid #333;
+            color: #222;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            background-color: white;
+        }
+
+        .wrapper {
+            position: relative;
+            margin-top: -8px;
+            background-color: whitesmoke;
+        }
+
+        .listening-rect {
+            fill: transparent;
+        }
+
+        .tooltip2 {
+            opacity: 0;
+            position: absolute;
+            top: 20px;
+            left: 10;
+            padding: 0.6em 1em;
+            background: #fff;
+            border: .5px solid #f5f5f5;
+            text-align: left;
+            line-height: 1.3em;
+            font-size: .7em;
+            font-weight: 600;
+            z-index: 10;
+            transition: all 0.1s ease-out;
+            pointer-events: none;
+            border-radius: 5px;
+            box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
+            z-index: 999;
+        }
+
+        .tooltip2:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border: 1px solid #ddd;
+            border-top-color: transparent;
+            border-left-color: transparent;
+            transform: translate(-50%, 50%) rotate(45deg);
+            transform-origin: center center;
+            z-index: 999;
+        }
+
+        .tooltip2-title {
+            margin-bottom: 0.3em;
+            color: #222;
+            font-size: 1em;
+            font-weight: 600;
+            padding-top: 4px;
+        }
+
+        .tooltip2-text {
+            margin-bottom: 0.3em;
+            color: #222;
+            font-size: .9em;
+            font-weight: 500;
+            line-height: 1em;
+        }
+
+        .tooltip2-num {
+            float: right;
+            font-weight: 600;
+        }
+
+        .grid line {
+            stroke: #ddd;
+            /* stroke-dasharray: 1.5; */
+        }
+
+        .voronoi {
+            fill: transparent;
+        }
     </style>
 </head>
 
@@ -445,7 +537,7 @@
                         </div>
                     </div>
 
-                    <div class="navbar-icon" href="#" id="globe-icon" title="Zoom to Stations Extent">
+                    <div class="navbar-icon" href="#" id="globe-icon" title="Zoom to Stations Full Extent">
                         <svg class="icon mr6 globe">
                             <use xlink:href="#icon-globe" />
                         </svg>
@@ -475,6 +567,25 @@
         </div>
     </div>
 
+    <!-- d3.js  -->
+    <div>
+        <div id="ui-control">
+            <select id="dropdown">
+                <option value="conductivity" title="Conductivity (S/m)">Conductivity </option>
+                <option value="sigma_t" title="Density (kg/m&sup3;)">Density </option>
+                <option value="oxygen" title="Dissolved O&#x2082; (ml/l)">Dissolved O&#x2082; </option>
+                <option value="fluorescence" title="Fluorescence (mg/m&sup3;)">Fluorescence </option>
+                <option value="par" title="PAR (uE/m&sup2; * sec)">PAR </option>
+                <option value="salinity" title="Salinity (PSU)" selected>Salinity </option>
+                <option value="temperature" title="Temperature (&#8451; )">Temperature </option>
+                <option value="obs" title="Backscatterence (NTU)">Turbidity </option>
+            </select>
+        </div>
+
+        <div hidden class="wrapper" id="wrapper"></div>
+    </div>
+
+    <script src="./js/d3-delaunay.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -565,8 +676,8 @@
 
         // reposition zoom control to upper right
         map.addControl(L.control.zoom({
-                position: 'topright'
-            }));
+            position: 'topright'
+        }));
 
         // create scalebar
         L.control.scale({
@@ -574,6 +685,10 @@
             metric: true,
             maxWidth: 120,
         }).addTo(map);
+
+        let selectedRadioValue = "0";
+        let attribute = "salinity"
+        let label = "Salinity (PSU)"
 
         // use D3 fetch to request data with async requests
         const allPoints = d3.json('data/stations.json');
@@ -659,9 +774,14 @@
 
                     layer.on('mousedown', function () {
                         let num = layer.feature.properties.Station
-                        console.log(num);
-
                         //$("#wrapper").empty();
+                        if ($("#pointLegend").is(":visible")) {
+                            $("#pointLegend").fadeOut("fast");
+                            $(".chartLegend").fadeIn(1600);
+                            updateChartLegend(stationPoints);
+                        } else {
+                            updateChartLegend(stationPoints);
+                        };
 
                         function updateChartLegend(stationPoints) {
                             const chartLegendTitle = "<div class='chartLegendMain'>" +
@@ -684,58 +804,64 @@
                                 const ctdfilter1 = data.filter(function (d) {
                                     return d.station === num
                                 });
-                                console.log(ctdfilter1);
 
-                                // get unique number of casts by date to dynamically 
-                                // create the number of radio buttons per station
+                                // get unique number of casts by date to dynamically create the number of radio buttons per station
                                 const ctdfilter2 = d3.map(ctdfilter1, function (d) {
                                     return d.date_gmt;
                                 }).keys()
-                                console.log(ctdfilter2);
 
                                 // dynamically create radio buttons
                                 let radioHTML = "";
                                 $.each(ctdfilter2, function (index, value) {
                                     radioHTML +=
                                         '<label class="radio-container"><input type="radio" name="radio-gray" value="' +
-                                        value + '" id="' + index + '">' +
+                                        index + '" id="' + value + '">' +
                                         '<div class="radio radio--gray radio--s-label radio--darken75 mr6" id="' +
-                                        index + '"> ' +
+                                        value + '"> ' +
                                         '</div>' + '<div class="radioText">' + value +
                                         '</div></label>';
                                 });
                                 $(radioHTML).insertAfter(".chartLegendMain");
-                                $('input[name=radio-gray][id="0"]').prop('checked', true);
+
+                                let selected = $("input[name='radio-gray'][value='0']").prop(
+                                    'checked', true);
+                                let ctdfilter3 = ctdfilter1.filter(function (d) {
+                                    return d.cast === selectedRadioValue
+                                });
+                                console.log(ctdfilter3);
 
                                 const chartMeasurementTitle = "<div>" +
-                                "<h6 class='chartMeasurementTitle'>" +
-                                "Measurements " + "</h6></div>";
-                                $(chartMeasurementTitle).insertAfter(".radio-container:last");
+                                    "<h6 class='chartMeasurementTitle'>" +
+                                    "Measurements " + "</h6></div>";
+                                $(chartMeasurementTitle).insertAfter(
+                                    ".radio-container:last");
+                                
+                                const dropdown = $("#ui-control").html();
+                                $(dropdown).insertAfter(".chartMeasurementTitle");
+                                changeUI();
+
+                                // refresh d3.js charts
+
+                                $("input[name='radio-gray']").change(function () {
+                                    selectedRadioValue = this.value;
+
+                                    // create new array of filtered data by date with selected radio
+                                    ctdfilter3 = ctdfilter1.filter(function (d) {
+                                        return d.cast === selectedRadioValue
+                                    });
+                                    console.log(ctdfilter3);
+
+                                    // refresh d3.js charts 
 
 
-                                // create new array of filtered data by date in selected radio
+                                });
 
-                                // draw d3 charts
 
 
                             });
-
-
-
-
-
-
-
-
                         };
 
-                        if ($("#pointLegend").is(":visible")) {
-                            $("#pointLegend").fadeOut("fast");
-                            $(".chartLegend").fadeIn(1600);
-                            updateChartLegend(stationPoints);
-                        } else {
-                            updateChartLegend(stationPoints);
-                        };
+
                     });
                 });
             };
@@ -767,7 +893,17 @@
                 });
             };
 
+            function changeUI() {
+                $('select[id="dropdown"]').change(function () {
+                    $("#wrapper").empty();
+                    attribute = this.value;
+                    label = this.options[this.selectedIndex].title
+                    //drawChart();
+                    console.log(attribute)
+                });
+            }
 
+            // draw d3.js charts function
 
         };
         $('#loader').remove();
