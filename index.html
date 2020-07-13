@@ -418,7 +418,7 @@
             height: 20px;
             border: none;
             border-radius: 5px;
-            border:1px solid #333;
+            border: 1px solid #333;
             color: #222;
             font-family: inherit;
             font-size: 12px;
@@ -773,95 +773,17 @@
                     });
 
                     layer.on('mousedown', function () {
-                        let num = layer.feature.properties.Station
+                        let num = layer.feature.properties.Station;
                         //$("#wrapper").empty();
                         if ($("#pointLegend").is(":visible")) {
                             $("#pointLegend").fadeOut("fast");
                             $(".chartLegend").fadeIn(1600);
-                            updateChartLegend(stationPoints);
+                            getChartData(layer);
+                            updateChartLegendTitle(layer);
                         } else {
-                            updateChartLegend(stationPoints);
+                            getChartData(layer);
+                            updateChartLegendTitle(layer);
                         };
-
-                        function updateChartLegend(stationPoints) {
-                            const chartLegendTitle = "<div class='chartLegendMain'>" +
-                                "<h4 class='chartLegendTitle'>" +
-                                "Station " + num + "</h4>" + "<hr>" +
-                                "<h6 class='chartMeasurementDateTitle'>" +
-                                "Measurement Dates " + "</h6></div>";
-                            $(".chartLegend").html(chartLegendTitle);
-
-                            // add close button
-                            const closeIcon = $(".legendCloseIcon").html();
-                            $(closeIcon).insertBefore(".chartLegendMain");
-                            $(".closeIconDiv").click(function () {
-                                $('.chartLegend').fadeOut();
-                                $('.pointLegend').fadeIn(1600);
-                            });
-
-                            // filter initial num station # in csv 
-                            d3.csv("data/y2019.csv").then(function (data) {
-                                const ctdfilter1 = data.filter(function (d) {
-                                    return d.station === num
-                                });
-
-                                // get unique number of casts by date to dynamically create the number of radio buttons per station
-                                const ctdfilter2 = d3.map(ctdfilter1, function (d) {
-                                    return d.date_gmt;
-                                }).keys()
-
-                                // dynamically create radio buttons
-                                let radioHTML = "";
-                                $.each(ctdfilter2, function (index, value) {
-                                    radioHTML +=
-                                        '<label class="radio-container"><input type="radio" name="radio-gray" value="' +
-                                        index + '" id="' + value + '">' +
-                                        '<div class="radio radio--gray radio--s-label radio--darken75 mr6" id="' +
-                                        value + '"> ' +
-                                        '</div>' + '<div class="radioText">' + value +
-                                        '</div></label>';
-                                });
-                                $(radioHTML).insertAfter(".chartLegendMain");
-
-                                let selected = $("input[name='radio-gray'][value='0']").prop(
-                                    'checked', true);
-                                let ctdfilter3 = ctdfilter1.filter(function (d) {
-                                    return d.cast === selectedRadioValue
-                                });
-                                console.log(ctdfilter3);
-
-                                const chartMeasurementTitle = "<div>" +
-                                    "<h6 class='chartMeasurementTitle'>" +
-                                    "Measurements " + "</h6></div>";
-                                $(chartMeasurementTitle).insertAfter(
-                                    ".radio-container:last");
-                                
-                                const dropdown = $("#ui-control").html();
-                                $(dropdown).insertAfter(".chartMeasurementTitle");
-                                changeUI();
-
-                                // refresh d3.js charts
-
-                                $("input[name='radio-gray']").change(function () {
-                                    selectedRadioValue = this.value;
-
-                                    // create new array of filtered data by date with selected radio
-                                    ctdfilter3 = ctdfilter1.filter(function (d) {
-                                        return d.cast === selectedRadioValue
-                                    });
-                                    console.log(ctdfilter3);
-
-                                    // refresh d3.js charts 
-
-
-                                });
-
-
-
-                            });
-                        };
-
-
                     });
                 });
             };
@@ -871,7 +793,7 @@
             function extentIcon(stationPoints) {
                 $('#globe-icon').click(function () {
                     map.flyToBounds(stationPoints.getBounds(), {
-                        padding: [30, 30]
+                        padding: [50, 50]
                     });
                 });
             };
@@ -893,7 +815,85 @@
                 });
             };
 
-            function changeUI() {
+            function updateChartLegendTitle(layer) {
+                let num = layer.feature.properties.Station;
+
+                const chartLegendTitle = "<div class='chartLegendMain'>" +
+                    "<h4 class='chartLegendTitle'>" +
+                    "Station " + num + "</h4>" + "<hr>" +
+                    "<h6 class='chartMeasurementDateTitle'>" +
+                    "Measurement Dates " + "</h6></div>";
+                $(".chartLegend").html(chartLegendTitle);
+
+                // add close button
+                const closeIcon = $(".legendCloseIcon").html();
+                $(closeIcon).insertBefore(".chartLegendMain");
+                $(".closeIconDiv").click(function () {
+                    $('.chartLegend').fadeOut();
+                    $('.pointLegend').fadeIn(1600);
+                });
+            };
+
+            function getChartData(layer) {
+                let num = layer.feature.properties.Station;
+
+                // filter initial num station # in csv 
+                d3.csv("data/y2019.csv").then(function (data) {
+                    let ctdfilter1 = data.filter(function (d) {
+                        return d.station === num
+                    });
+
+                    // get unique number of casts by date to dynamically create the number of radio buttons per station
+                    let ctdfilter2 = d3.map(ctdfilter1, function (d) {
+                        return d.date_gmt;
+                    }).keys()
+
+                    let ctdfilter3 = ctdfilter1.filter(function (d) {
+                        return d.cast === selectedRadioValue
+                    });
+
+                    console.log("ctdfilter3: ", ctdfilter3);
+
+                    // dynamically create radio buttons
+                    let radioHTML = "";
+                    $.each(ctdfilter2, function (index, value) {
+                        radioHTML +=
+                            '<label class="radio-container"><input type="radio" name="radio-gray" value="' +
+                            index + '" id="' + value + '">' +
+                            '<div class="radio radio--gray radio--s-label radio--darken75 mr6" id="' +
+                            value + '"> ' +
+                            '</div>' + '<div class="radioText">' + value +
+                            '</div></label>';
+                    });
+                    $(radioHTML).insertAfter(".chartLegendMain");
+                    let selected = $("input[name='radio-gray'][value='0']").prop(
+                        'checked', true);
+
+                    const chartMeasurementTitle = "<div>" +
+                        "<h6 class='chartMeasurementTitle'>" +
+                        "CTD Measurements " + "</h6></div>";
+                    $(chartMeasurementTitle).insertAfter(
+                        ".radio-container:last");
+
+                    const dropdown = $("#ui-control").html();
+                    $(dropdown).insertAfter(".chartMeasurementTitle");
+                    changeDropdownUI();
+
+                    $("input[name='radio-gray']").change(function () {
+                        selectedRadioValue = this.value;
+                        console.log("selectedRadioValue: ", selectedRadioValue);
+                        // create new array of filtered data by date with selected radio
+                        ctdfilter3 = ctdfilter1.filter(function (d) {
+                            return d.cast === selectedRadioValue
+                        });
+                        console.log(ctdfilter3);
+                        // CALL d3.js chart function
+                    });
+                });
+            };
+
+            // toggle CTD selection dropdown menu
+            function changeDropdownUI() {
                 $('select[id="dropdown"]').change(function () {
                     $("#wrapper").empty();
                     attribute = this.value;
@@ -901,9 +901,14 @@
                     //drawChart();
                     console.log(attribute)
                 });
-            }
+            };
 
             // draw d3.js charts function
+
+
+
+
+
 
         };
         $('#loader').remove();
