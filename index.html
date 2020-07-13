@@ -184,10 +184,6 @@
             opacity: 1;
         }
 
-        /* .leaflet-control-layers-list {
-            color: #222;
-        } */
-
         .show1 {
             display: block;
         }
@@ -342,7 +338,6 @@
             border-radius: 5px;
             text-align: left;
             width: 305px;
-            max-height: calc(100vh - 0px - 130px);
             overflow-y: auto;
         }
 
@@ -413,7 +408,7 @@
         /* d3 css */
         #dropdown {
             margin-left: 14px;
-            margin-bottom: 16px;
+            margin-bottom: 6px;
             width: 102px;
             height: 20px;
             border: none;
@@ -428,11 +423,22 @@
 
         .wrapper {
             position: relative;
-            margin-top: -8px;
-            background-color: whitesmoke;
+            z-index: 1000;
+            color: #989898;
+            margin-left: -6px;
+            margin-bottom: 10px;
+            background-color: white;
         }
 
         .listening-rect {
+            fill: transparent;
+        }
+
+        .grid line {
+            opacity: 0.3;
+        }
+
+        .voronoi {
             fill: transparent;
         }
 
@@ -491,15 +497,6 @@
         .tooltip2-num {
             float: right;
             font-weight: 600;
-        }
-
-        .grid line {
-            stroke: #ddd;
-            /* stroke-dasharray: 1.5; */
-        }
-
-        .voronoi {
-            fill: transparent;
         }
     </style>
 </head>
@@ -568,21 +565,17 @@
     </div>
 
     <!-- d3.js  -->
-    <div>
-        <div id="ui-control">
-            <select id="dropdown">
-                <option value="conductivity" title="Conductivity (S/m)">Conductivity </option>
-                <option value="sigma_t" title="Density (kg/m&sup3;)">Density </option>
-                <option value="oxygen" title="Dissolved O&#x2082; (ml/l)">Dissolved O&#x2082; </option>
-                <option value="fluorescence" title="Fluorescence (mg/m&sup3;)">Fluorescence </option>
-                <option value="par" title="PAR (uE/m&sup2; * sec)">PAR </option>
-                <option value="salinity" title="Salinity (PSU)" selected>Salinity </option>
-                <option value="temperature" title="Temperature (&#8451; )">Temperature </option>
-                <option value="obs" title="Backscatterence (NTU)">Turbidity </option>
-            </select>
-        </div>
-
-        <div hidden class="wrapper" id="wrapper"></div>
+    <div id="ui-control">
+        <select id="dropdown">
+            <option value="conductivity" title="Conductivity (S/m)">Conductivity </option>
+            <option value="sigma_t" title="Density (kg/m&sup3;)">Density </option>
+            <option value="oxygen" title="Dissolved O&#x2082; (ml/l)">Dissolved O&#x2082; </option>
+            <option value="fluorescence" title="Fluorescence (mg/m&sup3;)">Fluorescence </option>
+            <option value="par" title="PAR (uE/m&sup2; * sec)">PAR </option>
+            <option value="salinity" title="Salinity (PSU)" selected>Salinity </option>
+            <option value="temperature" title="Temperature (&#8451; )">Temperature </option>
+            <option value="obs" title="Backscatterence (NTU)">Turbidity </option>
+        </select>
     </div>
 
     <script src="./js/d3-delaunay.min.js"></script>
@@ -875,9 +868,6 @@
                     // select first radio button
                     let selected = $("input[name='radio-gray'][value='0']").prop(
                         'checked', true);
-                    
-                    // call d3.js chart function
-                    drawD3Chart();
 
                     // toggle radio buttons
                     $("input[name='radio-gray']").change(function () {
@@ -891,19 +881,21 @@
                         });
                         chartData.push(ctdfilter3);
                         // call d3.js chart function
+                        $("#wrapper").empty();
                         drawD3Chart();
                     });
 
-                    const chartMeasurementTitle = "<div>" +
+                    const chartMeasurementTitle =
                         "<h6 class='chartMeasurementTitle'>" +
-                        "CTD Measurements " + "</h6></div>";
+                        "CTD Measurements " + "</h6>";
                     $(chartMeasurementTitle).insertAfter(
                         ".radio-container:last");
 
                     const dropdown = $("#ui-control").html();
                     $(dropdown).insertAfter(".chartMeasurementTitle");
-                    changeDropdownUI();
 
+                    changeDropdownUI();
+                    drawD3Chart();
                 });
             };
 
@@ -913,25 +905,139 @@
                     $("#wrapper").empty();
                     attribute = this.value;
                     label = this.options[this.selectedIndex].title
-                    //redrawChart();
+                    drawD3Chart();
                     console.log(attribute)
                 });
             };
 
-            // draw d3.js charts function
             function drawD3Chart() {
 
+                const chart2Canvas = "<div class='wrapper' id='wrapper'>" + "</div>"
+                $(chart2Canvas).insertAfter("#dropdown");
+
                 // access data
-                console.log('chartData: ', chartData)
-                
+                const dataset = chartData[0];
+                console.log("DATASET: ", dataset);
                 const yAccessor = d => +d.depth * -1;
                 const xAccessor = d => +d[attribute];
+
+                console.log(yAccessor(dataset[0]));
+                console.log(xAccessor(dataset[0]));
+
+                // create chart dimensions
+                let dimensions = {
+                    width: 300,
+                    height: 350,
+                    margin: {
+                        top: 15,
+                        right: 15,
+                        bottom: 40,
+                        left: 60,
+                    },
+                }
+
+                dimensions.boundedWidth = dimensions.width -
+                    dimensions.margin.left -
+                    dimensions.margin.right
+                dimensions.boundedHeight = dimensions.height -
+                    dimensions.margin.top -
+                    dimensions.margin.bottom
+
+                // draw canvas
+                const wrapper = d3.select("#wrapper")
+                    .append("svg")
+                    .attr("width", dimensions.width)
+                    .attr("height", dimensions.height)
+
+                const bounds = wrapper.append("g")
+                    .style("transform", `translate(${
+                    dimensions.margin.left
+                }px, ${
+                    dimensions.margin.top
+                }px)`)
+
+                // create scales
+                const yScale = d3.scaleLinear()
+                    .domain(d3.extent(dataset, yAccessor))
+                    .range([dimensions.boundedHeight, 0])
+                    .nice()
+
+                const xScale = d3.scaleLinear()
+                    .domain(d3.extent(dataset, xAccessor))
+                    .range([0, dimensions.boundedWidth])
+                    .nice()
+
+                // draw peripherals
+                const yAxisGenerator = d3.axisLeft()
+                    .scale(yScale)
+                    .ticks(5)
+
+                const yAxis = bounds.append("g")
+                    .call(yAxisGenerator)
+
+                const yAxisLabel = yAxis.append("text")
+                    .attr("class", "y-axis-label")
+                    .attr("fill", "#7E7E7E")
+                    .attr("transform", "rotate(-90)")
+                    .attr("x", -dimensions.boundedHeight / 2)
+                    .attr("y", -dimensions.margin.left + 26)
+                    .attr("text-anchor", "middle")
+                    .html("Depth (m)");
+
+                const xAxisGenerator = d3.axisBottom()
+                    .scale(xScale)
+                    .ticks(4)
+
+                const xAxis = bounds.append("g")
+                    .call(xAxisGenerator)
+                    .style("transform", `translateY(${
+                    (dimensions.boundedHeight)
+                }px)`)
+
+                const xAxisLabel = xAxis.append("text")
+                    .attr("class", "x-axis-label")
+                    .attr("fill", "#7E7E7E")
+                    .attr("x", dimensions.boundedWidth / 2)
+                    .attr("y", dimensions.margin.bottom - 6)
+                    .attr("text-anchor", "middle")
+                    .html(label)
+
+                // create gridlines
+                const gridlinesY = d3.axisTop()
+                    .tickFormat("")
+                    .tickSize(-dimensions.boundedHeight)
+                    .scale(xScale);
+
+                bounds.append("g")
+                    .attr("class", "grid")
+                    .call(gridlinesY);
+
+                const gridlinesX = d3.axisLeft()
+                    .tickFormat("")
+                    .tickSize(-dimensions.boundedWidth)
+                    .scale(yScale);
+
+                bounds.append("g")
+                    .attr("class", "grid")
+                    .call(gridlinesX);
+
+                // draw line 
+                const lineGenerator = d3.line()
+                    .x(d => xScale(xAccessor(d)))
+                    .y(d => yScale(yAccessor(d)))
+                    .curve(d3.curveMonotoneX);
+
+                const line = bounds.append("path")
+                    .attr("d", lineGenerator(dataset))
+                    .attr("fill", "none")
+                    .attr("stroke", "#222")
+                    .attr("stroke-width", 1.5)
+                    .attr("class", "line")
+
+                
+
+
             };
-
-
-
-
-
         };
         $('#loader').remove();
     </script>
