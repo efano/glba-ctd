@@ -352,7 +352,8 @@
             width: 18px;
             padding: 2px;
             opacity: 0.7;
-            right: 4px;
+            margin-top: 3px;
+            margin-right: 4px;
         }
 
         .closeIcon:hover {
@@ -391,7 +392,6 @@
             border-radius: 50%;
             height: 16px;
             width: 16px;
-
         }
 
         .radioText {
@@ -866,8 +866,21 @@
                             '</div></label>';
                     });
                     $(radioHTML).insertAfter(".chartLegendMain");
+                    // select first radio button
                     let selected = $("input[name='radio-gray'][value='0']").prop(
                         'checked', true);
+
+                    // toggle radio buttons
+                    $("input[name='radio-gray']").change(function () {
+                        selectedRadioValue = this.value;
+                        console.log("selectedRadioValue: ", selectedRadioValue);
+                        // create new array of filtered data by date with selected radio
+                        ctdfilter3 = ctdfilter1.filter(function (d) {
+                            return d.cast === selectedRadioValue
+                        });
+                        console.log(ctdfilter3);
+                        // !!!!!!!!!!!! CALL d3.js chart function
+                    });
 
                     const chartMeasurementTitle = "<div>" +
                         "<h6 class='chartMeasurementTitle'>" +
@@ -879,16 +892,6 @@
                     $(dropdown).insertAfter(".chartMeasurementTitle");
                     changeDropdownUI();
 
-                    $("input[name='radio-gray']").change(function () {
-                        selectedRadioValue = this.value;
-                        console.log("selectedRadioValue: ", selectedRadioValue);
-                        // create new array of filtered data by date with selected radio
-                        ctdfilter3 = ctdfilter1.filter(function (d) {
-                            return d.cast === selectedRadioValue
-                        });
-                        console.log(ctdfilter3);
-                        // CALL d3.js chart function
-                    });
                 });
             };
 
@@ -898,7 +901,7 @@
                     $("#wrapper").empty();
                     attribute = this.value;
                     label = this.options[this.selectedIndex].title
-                    //drawChart();
+                    //redrawChart();
                     console.log(attribute)
                 });
             };
