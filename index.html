@@ -687,6 +687,8 @@
         }).addTo(map);
 
         let selectedRadioValue = "0";
+        let ctdfilter3 = [];
+        let chartData = [];
         let attribute = "salinity"
         let label = "Salinity (PSU)"
 
@@ -775,14 +777,17 @@
                     layer.on('mousedown', function () {
                         let num = layer.feature.properties.Station;
                         //$("#wrapper").empty();
+                        selectedRadioValue = "0";
+                        ctdfilter3.length = 0;
+                        chartData.length = 0;
                         if ($("#pointLegend").is(":visible")) {
                             $("#pointLegend").fadeOut("fast");
                             $(".chartLegend").fadeIn(1600);
-                            getChartData(layer);
                             updateChartLegendTitle(layer);
+                            getChartData(layer);
                         } else {
-                            getChartData(layer);
                             updateChartLegendTitle(layer);
+                            getChartData(layer);
                         };
                     });
                 });
@@ -848,11 +853,11 @@
                         return d.date_gmt;
                     }).keys()
 
+                    chartData.length = 0;
                     let ctdfilter3 = ctdfilter1.filter(function (d) {
                         return d.cast === selectedRadioValue
                     });
-
-                    console.log("ctdfilter3: ", ctdfilter3);
+                    chartData.push(ctdfilter3);
 
                     // dynamically create radio buttons
                     let radioHTML = "";
@@ -866,20 +871,27 @@
                             '</div></label>';
                     });
                     $(radioHTML).insertAfter(".chartLegendMain");
+
                     // select first radio button
                     let selected = $("input[name='radio-gray'][value='0']").prop(
                         'checked', true);
+                    
+                    // call d3.js chart function
+                    drawD3Chart();
 
                     // toggle radio buttons
                     $("input[name='radio-gray']").change(function () {
                         selectedRadioValue = this.value;
-                        console.log("selectedRadioValue: ", selectedRadioValue);
+
                         // create new array of filtered data by date with selected radio
+                        ctdfilter3.length = 0;
+                        chartData.length = 0;
                         ctdfilter3 = ctdfilter1.filter(function (d) {
                             return d.cast === selectedRadioValue
                         });
-                        console.log(ctdfilter3);
-                        // !!!!!!!!!!!! CALL d3.js chart function
+                        chartData.push(ctdfilter3);
+                        // call d3.js chart function
+                        drawD3Chart();
                     });
 
                     const chartMeasurementTitle = "<div>" +
@@ -907,12 +919,14 @@
             };
 
             // draw d3.js charts function
+            function drawD3Chart() {
 
-
-
-
-
-
+                // access data
+                console.log('chartData: ', chartData)
+                
+                const yAccessor = d => +d.depth * -1;
+                const xAccessor = d => +d[attribute];
+            };
         };
         $('#loader').remove();
     </script>
