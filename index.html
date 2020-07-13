@@ -184,9 +184,9 @@
             opacity: 1;
         }
 
-        .leaflet-control-layers-list {
-            color: #444;
-        }
+        /* .leaflet-control-layers-list {
+            color: #222;
+        } */
 
         .show1 {
             display: block;
@@ -335,16 +335,15 @@
         }
 
         .chartLegend {
-            /* position: absolute; */
+            position: absolute;
             top: 0px;
             background-color: rgba(255, 255, 255, 1);
             box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
             text-align: left;
             width: 305px;
-            /* max-height: calc(100vh - 0px - 130px); */
+            max-height: calc(100vh - 0px - 130px);
             overflow-y: auto;
-            z-index: 1005;
         }
 
         .closeIcon {
@@ -646,6 +645,7 @@
             maxZoom: 16,
             zoomSnap: .1,
             layers: imageryESRI,
+            zoomControl: false,
         };
 
         const map = L.map('map', options);
@@ -673,6 +673,11 @@
         function setParent(el, newParent) {
             newParent.appendChild(el);
         };
+
+        // reposition zoom control to upper right
+        map.addControl(L.control.zoom({
+            position: 'topright'
+        }));
 
         // create scalebar
         L.control.scale({
@@ -775,18 +780,15 @@
                         selectedRadioValue = "0";
                         ctdfilter3.length = 0;
                         chartData.length = 0;
-                        $(".chartLegend").fadeIn(1600);
+                        if ($("#pointLegend").is(":visible")) {
+                            $("#pointLegend").fadeOut("fast");
+                            $(".chartLegend").fadeIn(1600);
                             updateChartLegendTitle(layer);
                             getChartData(layer);
-                        // if ($("#pointLegend").is(":visible")) {
-                        //     $("#pointLegend").fadeOut("fast");
-                        //     $(".chartLegend").fadeIn(1600);
-                        //     updateChartLegendTitle(layer);
-                        //     getChartData(layer);
-                        // } else {
-                        //     updateChartLegendTitle(layer);
-                        //     getChartData(layer);
-                        // };
+                        } else {
+                            updateChartLegendTitle(layer);
+                            getChartData(layer);
+                        };
                     });
                 });
             };
@@ -804,7 +806,7 @@
             // create legend
             function drawChartLegend() {
                 const chartLegend = L.control({
-                    position: 'topright'
+                    position: 'topleft'
                 });
                 chartLegend.onAdd = function (map) {
                     div = L.DomUtil.create('div', 'chartLegend');
@@ -833,7 +835,7 @@
                 $(closeIcon).insertBefore(".chartLegendMain");
                 $(".closeIconDiv").click(function () {
                     $('.chartLegend').fadeOut();
-                    //$('.pointLegend').fadeIn(1600);
+                    $('.pointLegend').fadeIn(1600);
                 });
             };
 
@@ -925,6 +927,11 @@
                 const yAccessor = d => +d.depth * -1;
                 const xAccessor = d => +d[attribute];
             };
+
+
+
+
+
         };
         $('#loader').remove();
     </script>
