@@ -792,6 +792,9 @@
                             updateChartLegendTitle(layer);
                             getChartData(layer);
                         };
+                        const coords = layer.getLatLng();
+                        map.flyTo(coords, 12);
+
                     });
                 });
             };
@@ -828,7 +831,7 @@
 
                 const chartLegendTitle = "<div class='chartLegendMain'>" +
                     "<h4 class='chartLegendTitle'>" +
-                    "Station " + num + "</h4>" + 
+                    "Station " + num + "</h4>" +
                     "<h6 class='chartMeasurementDateTitle'>" +
                     "Measurement Dates " + "</h6></div>";
                 $(".chartLegend").html(chartLegendTitle);
@@ -1110,7 +1113,8 @@
                         "<div class='tooltip2-text'>" + "Conductivity: &thinsp;" +
                         "<span class='tooltip2-num' id='conductivity'>" +
                         "</span></div>" +
-                        "<div class='tooltip2-text'>" + "Density: &thinsp;" + "<span class='tooltip2-num' id='sigma_t'>" +
+                        "<div class='tooltip2-text'>" + "Density: &thinsp;" +
+                        "<span class='tooltip2-num' id='sigma_t'>" +
                         "</span></div>" +
                         "<div class='tooltip2-text'>" + "Dissolved O&#x2082;: &thinsp;" +
                         "<span class='tooltip2-num' id='oxygen'>" +
