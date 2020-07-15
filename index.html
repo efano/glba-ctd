@@ -777,7 +777,9 @@
 
                     layer.on('mousedown', function () {
                         let num = layer.feature.properties.Station;
-                        //$("#wrapper").empty();
+                        $("#wrapper").remove();
+                        attribute = "salinity";
+                        label = "Salinity (PSU)";
                         selectedRadioValue = "0";
                         ctdfilter3.length = 0;
                         chartData.length = 0;
@@ -840,6 +842,17 @@
                 });
             };
 
+            // toggle CTD selection dropdown menu
+            function changeDropdownUI() {
+                $('select[id="dropdown"]').change(function () {
+                    $("#wrapper").remove();
+                    attribute = this.value;
+                    label = this.options[this.selectedIndex].title
+                    drawD3Chart();
+                    console.log(attribute)
+                });
+            };
+
             function getChartData(layer) {
                 let num = layer.feature.properties.Station;
 
@@ -889,7 +902,7 @@
                         });
                         chartData.push(ctdfilter3);
                         // call d3.js chart function
-                        $("#wrapper").empty();
+                        $("#wrapper").remove();
                         drawD3Chart();
                     });
 
@@ -902,24 +915,13 @@
                     const dropdown = $("#ui-control").html();
                     $(dropdown).insertAfter(".chartMeasurementTitle");
 
+                    $("#wrapper").remove();
                     changeDropdownUI();
                     drawD3Chart();
                 });
             };
 
-            // toggle CTD selection dropdown menu
-            function changeDropdownUI() {
-                $('select[id="dropdown"]').change(function () {
-                    $("#wrapper").empty();
-                    attribute = this.value;
-                    label = this.options[this.selectedIndex].title
-                    drawD3Chart();
-                    console.log(attribute)
-                });
-            };
-
             function drawD3Chart() {
-
                 const chart2Canvas = "<div class='wrapper' id='wrapper'>" + "</div>"
                 $(chart2Canvas).insertAfter("#dropdown");
 
