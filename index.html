@@ -506,6 +506,7 @@
             float: right;
             font-weight: 600;
         }
+
     </style>
 </head>
 
@@ -921,6 +922,8 @@
                     $("#wrapper").remove();
                     changeDropdownUI();
                     drawD3Chart();
+
+                    console.log('attribute: ', attribute);
                 });
             };
 
@@ -933,9 +936,6 @@
                 console.log("DATASET: ", dataset);
                 const yAccessor = d => +d.depth * -1;
                 const xAccessor = d => +d[attribute];
-
-                console.log(yAccessor(dataset[0]));
-                console.log(xAccessor(dataset[0]));
 
                 // create chart dimensions
                 let dimensions = {
@@ -1106,10 +1106,9 @@
 
                 return tooltip
                     .style("visibility", "visible")
-                    .html("<span>" +
+                    .html("<span class='tooltip2-html'>" +
                         "<div class='tooltip2-title'>" + "Depth: &thinsp;" + "<span class='tooltip2-num' id='depth'>" +
                         "</span></div>" +
-                        "<hr>" +
                         "<div class='tooltip2-text'>" + "Conductivity: &thinsp;" +
                         "<span class='tooltip2-num' id='conductivity'>" +
                         "</span></div>" +
