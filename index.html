@@ -339,6 +339,7 @@
             text-align: left;
             width: 305px;
             overflow-y: auto;
+            max-height: calc(100vh - 0px - 40px);
         }
 
         .closeIcon {
@@ -372,9 +373,9 @@
             font-size: 15px;
             font-weight: 500;
             letter-spacing: 0.1px;
-            margin-top: 10px;
+            margin-top: 14px;
             margin-left: 14px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .radio-container {
@@ -400,7 +401,7 @@
             letter-spacing: 0.1px;
             margin-top: 10px;
             margin-left: 14px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         /* d3 css */
@@ -934,7 +935,7 @@
                 // create chart dimensions
                 let dimensions = {
                     width: 300,
-                    height: 360,
+                    height: 400,
                     margin: {
                         top: 15,
                         right: 15,
@@ -1051,10 +1052,11 @@
                     .attr("cx", d => xScale(xAccessor(d)))
                     .attr("cy", d => yScale(yAccessor(d)))
                     .transition()
-                    .delay(760)
-                    .attr("r", 1)
-                    //.attr("fill", "#FF00D8")
-                    .attr("stroke", "#FF00D8")
+                    .delay(1400)
+                    .attr("r", 1.5)
+                    .attr("fill", "#FF00D8")
+                    .attr("stroke", "#222")
+                    .attr("stroke-width", 0.25)
 
                 const oldDots = dots.exit()
                     .remove()
@@ -1066,7 +1068,7 @@
                     .attr("stroke-dasharray", totalLineLength + " " + totalLineLength)
                     .attr("stroke-dashoffset", totalLineLength)
                     .transition()
-                    .duration(750)
+                    .duration(1100)
                     .ease(d3.easeLinear)
                     .attr("stroke-dashoffset", 0);
 
@@ -1130,9 +1132,10 @@
                         .attr("class", "tooltipDot")
                         .attr("cx", xScale(xAccessor(datum)))
                         .attr("cy", yScale(yAccessor(datum)))
-                        .attr("r", 4.5)
-                        .style("fill", "#FF00D8")
-                        .style("stroke", "#222")
+                        .attr("r", 5)
+                        .style("fill", "yellow")
+                        .style("stroke", "#FF00D8")
+                        .attr("stroke-width", 2)
                         .style("pointer-events", "none")
 
                     const formatDepth = d => `${d3.format(".0f")(d)} meters`
@@ -1177,7 +1180,7 @@
                         dimensions.margin.top
 
                     tooltip.style("transform", `translate(` +
-                        `calc( -50% + ${x}px),` +
+                        `calc( -46% + ${x}px),` +
                         `calc( 65% + ${y}px)` +
                         `)`)
 
