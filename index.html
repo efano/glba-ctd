@@ -580,8 +580,8 @@
             <option value="oxygen" title="Dissolved O&#x2082; (ml/l)">Dissolved O&#x2082; </option>
             <option value="fluorescence" title="Fluorescence (mg/m&sup3;)">Fluorescence </option>
             <option value="par" title="PAR (uE/m&sup2; * sec)">PAR </option>
-            <option value="salinity" title="Salinity (PSU)" selected>Salinity </option>
-            <option value="temperature" title="Temperature (&#8451; )">Temperature </option>
+            <option value="salinity" title="Salinity (PSU)">Salinity </option>
+            <option value="temperature" title="Temperature (&#8451; )" selected>Temperature </option>
             <option value="obs" title="Backscatterence (NTU)">Turbidity </option>
         </select>
     </div>
@@ -690,8 +690,8 @@
         let selectedRadioValue = "0";
         let ctdfilter3 = [];
         let chartData = [];
-        let attribute = "salinity"
-        let label = "Salinity (PSU)"
+        let attribute = "temperature"
+        let label = "Temperature (&#8451; )"
 
         // use D3 fetch to request data with async requests
         const allPoints = d3.json('data/stations.json');
@@ -778,8 +778,8 @@
                     layer.on('mousedown', function () {
                         let num = layer.feature.properties.Station;
                         $("#wrapper").remove();
-                        attribute = "salinity";
-                        label = "Salinity (PSU)";
+                        attribute = "temperature"
+                        label = "Temperature (&#8451; )"
                         selectedRadioValue = "0";
                         ctdfilter3.length = 0;
                         chartData.length = 0;
@@ -793,7 +793,7 @@
                             getChartData(layer);
                         };
                         const coords = layer.getLatLng();
-                        map.flyTo(coords, 12);
+                        map.flyTo(coords, 11);
 
                     });
                 });
