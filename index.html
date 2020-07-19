@@ -794,13 +794,11 @@
                             getChartData(layer);
                         };
                         const coords = layer.getLatLng();
-                        map.setView(coords, 11
-                        , {
+                        map.setView(coords, 11, {
                             animate: true,
                             duration: 1,
                             easeLinearity: 1
-                        }
-                        );
+                        });
                     });
                 });
             };
