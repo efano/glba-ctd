@@ -340,6 +340,7 @@
             width: 305px;
             overflow-y: auto;
             max-height: calc(100vh - 0px - 40px);
+            transition: all 0.1s ease-in-out;
         }
 
         .closeIcon {
@@ -427,6 +428,7 @@
             margin-left: -6px;
             margin-bottom: 10px;
             background-color: white;
+            transition: all 0.1s ease-in-out;
         }
 
         .listening-rect {
@@ -506,7 +508,6 @@
             float: right;
             font-weight: 600;
         }
-
     </style>
 </head>
 
@@ -794,8 +795,13 @@
                             getChartData(layer);
                         };
                         const coords = layer.getLatLng();
-                        map.flyTo(coords, 11);
-
+                        map.setView(coords, 11
+                        , {
+                            animate: true,
+                            duration: 1,
+                            easeLinearity: 1
+                        }
+                        );
                     });
                 });
             };
@@ -842,7 +848,7 @@
                 $(closeIcon).insertBefore(".chartLegendMain");
                 $(".closeIconDiv").click(function () {
                     $('.chartLegend').fadeOut();
-                    $('.pointLegend').fadeIn(1600);
+                    $('.pointLegend').fadeIn(2000);
                 });
             };
 
@@ -853,7 +859,7 @@
                     attribute = this.value;
                     label = this.options[this.selectedIndex].title
                     drawD3Chart();
-                    console.log(attribute)
+                    //console.log(attribute)
                 });
             };
 
@@ -923,7 +929,7 @@
                     changeDropdownUI();
                     drawD3Chart();
 
-                    console.log('attribute: ', attribute);
+                    //console.log('attribute: ', attribute);
                 });
             };
 
@@ -933,7 +939,7 @@
 
                 // access data
                 const dataset = chartData[0];
-                console.log("DATASET: ", dataset);
+                //console.log("DATASET: ", dataset);
                 const yAccessor = d => +d.depth * -1;
                 const xAccessor = d => +d[attribute];
 
@@ -1109,8 +1115,8 @@
                     .html("<span class='tooltip2-html'>" +
                         "<div class='tooltip2-title'>" + "Depth: &thinsp;" + "<span class='tooltip2-num' id='depth'>" +
                         "</span></div>" +
-                        "<div class='tooltip2-text'>" + "Conductivity: &thinsp;" +
-                        "<span class='tooltip2-num' id='conductivity'>" +
+                        "<div class='tooltip2-text' value='conductivity'>" + "Conductivity: &thinsp;" +
+                        "<span class='tooltip2-num' value='conductivity' id='conductivity'>" +
                         "</span></div>" +
                         "<div class='tooltip2-text'>" + "Density: &thinsp;" +
                         "<span class='tooltip2-num' id='sigma_t'>" +
@@ -1199,6 +1205,7 @@
                     tooltip.style("opacity", 0)
                 }
             };
+
         };
         $('#loader').remove();
     </script>
