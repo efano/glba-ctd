@@ -136,9 +136,13 @@
 
             // access data
             const dataset = await d3.csv("data/GLBA_CTD_Test.csv")
-            //console.log("DATASET: ", dataset);
+            console.log("DATASET: ", dataset);
             const yAccessor = d => +d.depth * -1;
             const xAccessor = d => +d[attribute];
+
+            console.log(yAccessor(dataset[0]));
+            console.log(xAccessor(dataset[0]));
+          
 
             // create chart dimensions
             let dimensions = {
