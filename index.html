@@ -1041,7 +1041,7 @@
                 const lineGenerator = d3.line()
                     .x(d => xScale(xAccessor(d)))
                     .y(d => yScale(yAccessor(d)))
-                    .curve(d3.curveMonotoneX);
+                    .curve(d3.curveMonotoneY);
 
                 const line = bounds.append("path")
                     .attr("d", lineGenerator(dataset))
