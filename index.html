@@ -786,12 +786,12 @@
                         chartData.length = 0;
                         if ($("#pointLegend").is(":visible")) {
                             $("#pointLegend").fadeOut("fast");
+                            updateChartLegendTitle(layer);
+                            getChartData(layer);
                             $(".chartLegend").fadeIn(1600);
-                            updateChartLegendTitle(layer);
-                            getChartData(layer);
                         } else {
-                            updateChartLegendTitle(layer);
                             getChartData(layer);
+                            updateChartLegendTitle(layer);
                         };
                         const coords = layer.getLatLng();
                         map.setView(coords, 11, {
