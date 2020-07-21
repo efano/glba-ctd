@@ -699,8 +699,7 @@
 
         // use Promise to wait until data is all loaded
         Promise.all([allPoints])
-            .then(
-                drawMap);
+            .then(drawMap);
 
         function drawMap(data) {
 
@@ -788,7 +787,7 @@
                             $("#pointLegend").fadeOut("fast");
                             getChartData(layer);
                             updateChartLegendTitle(layer);
-                            $(".chartLegend").fadeIn(1600);
+                            $(".chartLegend").fadeIn();
                         } else {
                             getChartData(layer);
                             updateChartLegendTitle(layer);
