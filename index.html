@@ -786,8 +786,8 @@
                         chartData.length = 0;
                         if ($("#pointLegend").is(":visible")) {
                             $("#pointLegend").fadeOut("fast");
-                            updateChartLegendTitle(layer);
                             getChartData(layer);
+                            updateChartLegendTitle(layer);
                             $(".chartLegend").fadeIn(1600);
                         } else {
                             getChartData(layer);
