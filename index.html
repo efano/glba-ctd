@@ -777,7 +777,6 @@
 
                     layer.on('mousedown', function () {
                         let num = layer.feature.properties.Station;
-                        $("#wrapper").remove();
                         attribute = "temperature"
                         label = "Temperature (&#8451; )"
                         selectedRadioValue = "0";
@@ -851,7 +850,6 @@
             // toggle CTD selection dropdown menu
             function changeDropdownUI() {
                 $('select[id="dropdown"]').change(function () {
-                    $("#wrapper").remove();
                     attribute = this.value;
                     label = this.options[this.selectedIndex].title
                     drawD3Chart();
@@ -907,8 +905,8 @@
                             return d.cast === selectedRadioValue
                         });
                         chartData.push(ctdfilter3);
+
                         // call d3.js chart function
-                        $("#wrapper").remove();
                         drawD3Chart();
                     });
 
@@ -921,7 +919,6 @@
                     const dropdown = $("#ui-control").html();
                     $(dropdown).insertAfter(".chartMeasurementTitle");
 
-                    $("#wrapper").remove();
                     changeDropdownUI();
                     drawD3Chart();
 
@@ -930,6 +927,7 @@
             };
 
             function drawD3Chart() {
+                $("#wrapper").remove();
                 const chart2Canvas = "<div class='wrapper' id='wrapper'>" + "</div>"
                 $(chart2Canvas).insertAfter("#dropdown");
 
