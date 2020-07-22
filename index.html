@@ -784,10 +784,10 @@
                         ctdfilter3.length = 0;
                         chartData.length = 0;
                         if ($("#pointLegend").is(":visible")) {
-                            $("#pointLegend").fadeOut("fast");
                             getChartData(layer);
-                            updateChartLegendTitle(layer);
+                            $("#pointLegend").fadeOut("fast");
                             $(".chartLegend").fadeIn(1000);
+                            updateChartLegendTitle(layer);
                         } else {
                             getChartData(layer);
                             updateChartLegendTitle(layer);
