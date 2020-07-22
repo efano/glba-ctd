@@ -786,10 +786,8 @@
                             getChartData(layer);
                             $("#pointLegend").fadeOut("fast");
                             $(".chartLegend").fadeIn(1000);
-                            updateChartLegendTitle(layer);
                         } else {
                             getChartData(layer);
-                            updateChartLegendTitle(layer);
                         };
                         const coords = layer.getLatLng();
                         map.setView(coords, 11, {
@@ -828,7 +826,17 @@
                 });
             };
 
-            function updateChartLegendTitle(layer) {
+            // toggle CTD selection dropdown menu
+            function changeDropdownUI() {
+                $('select[id="dropdown"]').change(function () {
+                    attribute = this.value;
+                    label = this.options[this.selectedIndex].title
+                    drawD3Chart();
+                    //console.log(attribute)
+                });
+            };
+
+            function getChartData(layer) {
                 let num = layer.feature.properties.Station;
 
                 const chartLegendTitle = "<div class='chartLegendMain'>" +
@@ -843,22 +851,8 @@
                 $(closeIcon).insertBefore(".chartLegendMain");
                 $(".closeIconDiv").click(function () {
                     $('.chartLegend').fadeOut();
-                    $('.pointLegend').fadeIn(1600);
+                    $('.pointLegend').fadeIn(1000);
                 });
-            };
-
-            // toggle CTD selection dropdown menu
-            function changeDropdownUI() {
-                $('select[id="dropdown"]').change(function () {
-                    attribute = this.value;
-                    label = this.options[this.selectedIndex].title
-                    drawD3Chart();
-                    //console.log(attribute)
-                });
-            };
-
-            function getChartData(layer) {
-                let num = layer.feature.properties.Station;
 
                 // filter initial num station # in csv 
                 d3.csv("data/y2019.csv").then(function (data) {
