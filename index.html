@@ -51,6 +51,15 @@
             z-index: 1010;
         }
 
+        #loader2 {
+            position: absolute;
+            top: 40%;
+            left: 0%;
+            margin: -33px 0 0 -33px;
+            width: 100%;
+            z-index: 1010;
+        }
+
         .navbarParent {
             background: #135154;
             box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4);
@@ -846,6 +855,10 @@
                     "Measurement Dates " + "</h6></div>";
                 $(".chartLegend").html(chartLegendTitle);
 
+                const loader2 = "<div>" + "<div class='flex-child loading' id='loader2'>" + 
+                "</div></div>"
+                $(loader2).insertAfter(".chartMeasurementDateTitle");
+
                 // add close button
                 const closeIcon = $(".legendCloseIcon").html();
                 $(closeIcon).insertBefore(".chartLegendMain");
@@ -918,7 +931,9 @@
 
                     //console.log('attribute: ', attribute);
                 });
+                $("#loader2").remove();
             };
+
 
             function drawD3Chart() {
                 $("#wrapper").remove();
