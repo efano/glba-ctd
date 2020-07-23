@@ -53,7 +53,7 @@
 
         #loader2 {
             position: absolute;
-            top: 85%;
+            top: 13%;
             left: 0%;
             width: 100%;
             z-index: 1010;
@@ -403,6 +403,7 @@
             width: 54px;
         }
 
+        .chartMeasurementDateTitle,
         .chartMeasurementTitle {
             font-size: 15px;
             font-weight: 500;
@@ -849,14 +850,12 @@
 
                 const chartLegendTitle = "<div class='chartLegendMain'>" +
                     "<h4 class='chartLegendTitle'>" +
-                    "Station " + num + "</h4>" +
-                    "<h6 class='chartMeasurementDateTitle'>" +
-                    "Measurement Dates " + "</h6></div>";
+                    "Station " + num + "</h4></div>";
                 $(".chartLegend").html(chartLegendTitle);
 
                 const loader2 = "<div>" + "<div class='flex-child loading' id='loader2'>" + 
                 "</div></div>"
-                $(loader2).insertAfter(".chartMeasurementDateTitle");
+                $(loader2).insertAfter(".chartLegendMain");
 
                 // add close button
                 const closeIcon = $(".legendCloseIcon").html();
@@ -915,6 +914,11 @@
                         // call d3.js chart function
                         drawD3Chart();
                     });
+
+                    const chartMeasurementDateTitle = "<h6 class='chartMeasurementDateTitle'>" +
+                    "Measurement Dates " + "</h6>";
+                    $(chartMeasurementDateTitle).insertBefore(
+                        ".radio-container:first");
 
                     const chartMeasurementTitle =
                         "<h6 class='chartMeasurementTitle'>" +
