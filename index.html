@@ -517,6 +517,11 @@
             float: right;
             font-weight: 600;
         }
+
+        .hover-line {
+            fill: #00FCFF;
+        }
+
     </style>
 </head>
 
@@ -854,8 +859,8 @@
                     "Station " + num + "</h4></div>";
                 $(".chartLegend").html(chartLegendTitle);
 
-                const loader2 = "<div>" + "<div class='flex-child loading loading--s' id='loader2'>" + 
-                "</div></div>"
+                const loader2 = "<div>" + "<div class='flex-child loading loading--s' id='loader2'>" +
+                    "</div></div>"
                 $(loader2).insertAfter(".chartLegendMain");
 
                 // add close button
@@ -917,7 +922,7 @@
                     });
 
                     const chartMeasurementDateTitle = "<h6 class='chartMeasurementDateTitle'>" +
-                    "Measurement Dates " + "</h6>";
+                        "Measurement Dates " + "</h6>";
                     $(chartMeasurementDateTitle).insertBefore(
                         ".radio-container:first");
 
@@ -936,7 +941,6 @@
                     //console.log('attribute: ', attribute);
                 });
             };
-
 
             function drawD3Chart() {
                 $("#loader2").remove();
@@ -1117,6 +1121,16 @@
                     .style("z-index", "10")
                     .style("visibility", "hidden")
 
+                // create crosshairs 
+                const hoverElementsGroup = bounds.append("g")
+                    .attr("opacity", 0)
+
+                const horizontalLine = hoverElementsGroup.append("rect")
+                    .attr("class", "hover-line")
+                    
+                const verticalLine = hoverElementsGroup.append("rect")
+                    .attr("class", "hover-line")
+
                 return tooltip
                     .style("visibility", "visible")
                     .html("<span class='tooltip2-html'>" +
@@ -1146,6 +1160,9 @@
                         "</span>")
 
                 function onMouseEnter(datum) {
+
+                    hoverElementsGroup.style("opacity", 1)
+
                     const dayDot = bounds.append("circle")
                         .attr("class", "tooltipDot")
                         .attr("cx", xScale(xAccessor(datum)))
@@ -1160,35 +1177,35 @@
                     tooltip.select("#depth")
                         .text(formatDepth(yAccessor(datum)))
 
-                    const formatConductivity = d => `${d3.format(".2f")(d)}`
+                    const formatConductivity = d => `${d3.format(".3f")(d)}`
                     tooltip.select("#conductivity")
                         .text(formatConductivity(datum.conductivity))
 
-                    const formatDensity = d => `${d3.format(".2f")(d)}`
+                    const formatDensity = d => `${d3.format(".3f")(d)}`
                     tooltip.select("#sigma_t")
                         .text(formatDensity(datum.sigma_t))
 
-                    const formatOxygen = d => `${d3.format(".2f")(d)}`
+                    const formatOxygen = d => `${d3.format(".3f")(d)}`
                     tooltip.select("#oxygen")
                         .text(formatOxygen(datum.oxygen))
 
-                    const formatFluorescence = d => `${d3.format(".2f")(d)}`
+                    const formatFluorescence = d => `${d3.format(".3f")(d)}`
                     tooltip.select("#fluorescence")
                         .text(formatFluorescence(datum.fluorescence))
 
-                    const formatPAR = d => `${d3.format(".2f")(d)}`
+                    const formatPAR = d => `${d3.format(".3f")(d)}`
                     tooltip.select("#par")
                         .text(formatPAR(datum.par))
 
-                    const formatSalinity = d => `${d3.format(".2f")(d)}`
+                    const formatSalinity = d => `${d3.format(".3f")(d)}`
                     tooltip.select("#salinity")
                         .text(formatSalinity(datum.salinity))
 
-                    const formatTemperature = d => `${d3.format(".2f")(d)}`
+                    const formatTemperature = d => `${d3.format(".3f")(d)}`
                     tooltip.select("#temperature")
                         .text(formatTemperature(datum.temperature))
 
-                    const formatTurbidity = d => `${d3.format(".2f")(d)}`
+                    const formatTurbidity = d => `${d3.format(".3f")(d)}`
                     tooltip.select("#obs")
                         .text(formatTurbidity(datum.obs))
 
@@ -1203,13 +1220,30 @@
                         `)`)
 
                     tooltip.style("opacity", 1)
+
+                    // draw crosshairs
+                    const xLine = xScale(xAccessor(datum))
+                    const yLine = yScale(yAccessor(datum))
+
+                    const hoverLineThickness = 1
+                    horizontalLine
+                        .attr("y", yLine)
+                        .attr("width", dimensions.boundedWidth)
+                        .attr("height", hoverLineThickness)
+                        
+
+                    verticalLine
+                        .attr("x", xLine)
+                        .attr("width", hoverLineThickness)
+                        .attr("height", dimensions.boundedHeight)
+
                 }
 
                 function onMouseLeave() {
+                    hoverElementsGroup.style("opacity", 0)
+                    tooltip.style("opacity", 0)
                     d3.selectAll(".tooltipDot")
                         .remove()
-
-                    tooltip.style("opacity", 0)
                 }
             };
 
