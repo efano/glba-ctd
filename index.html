@@ -1225,10 +1225,11 @@
                 }
 
                 function onMouseLeave() {
-                    hoverElementsGroup.style("opacity", 0)
-                    tooltip.style("opacity", 0)
                     d3.selectAll(".tooltipDot")
                         .remove()
+
+                    tooltip.style("opacity", 0)
+                    hoverElementsGroup.style("opacity", 0)
                 }
             };
 
